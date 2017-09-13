@@ -8,6 +8,8 @@ services:
   
  buboard-database:
   build: ./Database
+  ports:
+   - 3306:3306
   volumes:
    - buboard-db:/var/lib/mysql
 

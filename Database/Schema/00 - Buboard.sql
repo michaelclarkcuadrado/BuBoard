@@ -1,0 +1,3 @@
+GRANT ALL PRIVILEGES ON * . * TO 'buboard' IDENTIFIED BY 'buboard' WITH GRANT OPTION;
+
+CREATE DATABASE `buboard-data`;

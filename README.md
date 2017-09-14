@@ -1,6 +1,10 @@
 # BuBoard
 CS440 - BuBoard Assignment
 
+## Using / Hacking
+# Database Browsing
+A PhpMyAdmin server is available locally on port 8080.
+
 ## Starting in Docker
 
 ### First Run:

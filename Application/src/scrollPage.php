@@ -79,7 +79,14 @@
 			<!-- Basically just add new post cards into a mdl cell, should format correctly -->
 			<div class="mdl-grid mdl-color--grey-300">
 				<div class="mdl-cell mdl-cell--1-col mdl-cell--middle">
-				Content		
+				
+					
+
+
+
+
+
+	
 				</div>
 			</div>
 		</main>

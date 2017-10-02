@@ -1,0 +1,11 @@
+.mdl--layout__content {
+    align-items: center;
+    justify-content: center;
+}
+
+.mdl-grid {
+    max-width: 50%;
+    height: 600px;
+    align-items: center;
+    justify-content: center;
+}

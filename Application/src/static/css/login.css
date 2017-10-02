@@ -1,0 +1,12 @@
+.mdl-card__title > img {
+    max-width: 100%;
+}
+
+.mdl-layout {
+    align-items: center;
+    justify-content: center;
+}
+
+body {
+    background-color: #80d8ff;
+}

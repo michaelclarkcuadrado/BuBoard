@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 //Login Screen - BuBoard
 
@@ -12,30 +11,7 @@
     <link rel="stylesheet" href="static/css/login.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-=======
-<html>
-<!-- test -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-light_blue.min.css" />
-<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
-<style>
-.mdl-card__title > img {
-  max-width: 100%;
-}
-
-
-.mdl-layout {
-  align-items: center;
-  justify-content: center;
-}
-
-body{
-	background-color: #80d8ff;
-}
-</style>
-
->>>>>>> master
 <body>
 
 <!--
@@ -43,7 +19,6 @@ This div here should center this log in screen on any page that the user is on
 -->
 <main class="mdl--layout__content">
 
-<<<<<<< HEAD
     <!-- Subsection of the main page -->
     <div class="page-content">
         <!-- Centers the card on the page -->
@@ -97,7 +72,6 @@ This div here should center this log in screen on any page that the user is on
             </div>
         </div>
     </div>
-=======
 	<!-- Subsection of the main page -->
 	<div class="page-content"> 
 			<!-- Centers the card on the page -->
@@ -153,14 +127,11 @@ This div here should center this log in screen on any page that the user is on
 			</div>
 	</div>
 	</div>
->>>>>>> master
 </main>
 
 
 </body>
-<<<<<<< HEAD
 <script src="static/js/material.min.js"></script>
 =======
->>>>>>> master
 
 </html>

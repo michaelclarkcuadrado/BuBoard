@@ -3,6 +3,8 @@ version: '3.0'
 services:
  buboard-php:
   build: ./Application
+  volumes:
+   - ./Application/src:/var/www/html
   ports:
    - 80:80
   
@@ -13,6 +15,13 @@ services:
   volumes:
    - buboard-db:/var/lib/mysql
 
+ phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  container_name: phpmyadmin
+  environment:
+   - PMA_HOST=buboard-database
+  ports:
+   - 8080:80
 
 volumes:
  buboard-db:

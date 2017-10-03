@@ -52,7 +52,7 @@ This div here should center this log in screen on any page that the user is on
                                         Sign In
                                     </button>
 
-                                    <button class="mdl-cell mdl-cell--12-col mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+                                    <button onclick="window.location = 'signup.php'" class="mdl-cell mdl-cell--12-col mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
                                         Sign Up
                                     </button>
 

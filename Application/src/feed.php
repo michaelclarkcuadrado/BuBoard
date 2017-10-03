@@ -38,8 +38,7 @@
                     </h2>
                 </div>
                 <div class="mdl-card__supporting-text">
-                    This is a long text post about things and stuff. Many things are said here, regarding several other things. Sometimes, this text has substance. Sometimes, like this one, they do
-                    not.
+                    This is a long text post about things and stuff. Many things are said here, regarding several other things. Sometimes, this text has substance. Sometimes, like this 			    one, they do not.
                     <div class="card-image-attachments">
                         <hr>
                         Attachments:

@@ -69,12 +69,12 @@
                     </div>
                 </div>
                 <div class="mdl-card__menu">
-                    <button id="demo-menu-lower-right"
+                    <button :id=" post.post_id + 'cornermenu'"
                             class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="material-icons">more_vert</i>
                     </button>
                     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                        for="demo-menu-lower-right">
+                        :for=" post.post_id + 'cornermenu'">
                         <li class="mdl-menu__item">Follow User</li>
                         <li class="mdl-menu__item">RSVP</li>
                         <li class="mdl-menu__item">Delete Post</li>
@@ -100,6 +100,9 @@
             $.getJSON('api/getPosts.php', function (data) {
                 self.postsObj = data;
             });
+        },
+        updated: function(){
+            componentHandler.upgradeDom();
         },
         methods: {
             invertColor: function (hex, bw) {

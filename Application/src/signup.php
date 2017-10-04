@@ -74,13 +74,13 @@ This div here should center this log in screen on any page that the user is on
                     <div class="mdl-cell mdl-cell--6-col">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <h5 class="mdl-color-text--blue-grey-400">Password</h5>
-                            <input class="mdl-textfield__input" id="firstname"/>
+                            <input class="mdl-textfield__input" type="password" id="password"/>
                         </div>
                     </div>
                     <div class="mdl-cell mdl-cell--6-col">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <h5 class="mdl-color-text--blue-grey-400">Re-enter Password</h5>
-                            <input class="mdl-textfield__input" id="lastname"/>
+                            <input class="mdl-textfield__input" type="password" id="password2"/>
                         </div>
                     </div>
                     <div class="mdl-layout-spacer"></div>
@@ -89,6 +89,7 @@ This div here should center this log in screen on any page that the user is on
                     <div class="mdl-layout-spacer"></div>
                     <div class="mdl-cell mdl-cell--6-col">
                         <h5 class="mdl-color-text--blue-grey-400">Description</h5>
+			<input class="mdl-textfield__input" id="description"/>
                         <textarea class="mdl-textfield__input" type="text" rows="5" id="description"></textarea>
                     </div>
                 </div>

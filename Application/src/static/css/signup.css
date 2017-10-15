@@ -10,11 +10,11 @@ body {
     color: white;
 }
 
-.mdl-card{
-    width: 40%;
+.mdl-grid.center-items {
+  justify-content: center;
 }
 
-
-
-
+.wide {
+   width: 250px;
+}
 

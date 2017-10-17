@@ -10,7 +10,7 @@
     color: white;
 }
 
-#postsView {
+#postsContentPanel {
     background-image: url('/static/image/corktile.jpg');
 }
 
@@ -56,4 +56,15 @@
     padding-top: 24px;
     margin-bottom: 0;
     z-index: 99;
+}
+
+.thumbtack {
+    width:72px;
+    position: absolute;
+    left: calc(50% - 36px);
+    top: 2px;
+}
+
+.postTitleCard {
+    padding-top: 45px;
 }

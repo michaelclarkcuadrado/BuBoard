@@ -29,10 +29,11 @@
     </div>
 
     <!-- Creates the main content of the page -->
-    <main class="mdl--layout__content ">
+    <main class="mdl--layout__content" id="postsContentPanel">
         <div id="postsView" class="mdl-grid">
             <div v-for="(post, post_index) in postsObj" class="mdl-card mdl-shadow--6dp mdl-cell mdl-cell--4-col">
-                <div class="mdl-card__title mdl-color--blue">
+                <div class="postTitleCard mdl-card__title mdl-color--blue">
+                    <img class="thumbtack" src="static/image/thumbtack.png">
                     <h2 class="mdl-card__title-text">
                         {{post.post_title}}
                     </h2>

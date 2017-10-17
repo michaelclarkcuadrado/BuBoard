@@ -25,6 +25,16 @@
    width: 250px;
 }
 
+.browse {
+   width: 75%;
+   height: 5%;
+}
+
+.submit {
+   width: 100%;
+   height: 10%;
+}
+
 
 </style>
 
@@ -34,6 +44,7 @@ This div here should center this log in screen on any page that the user is on
 -->
 
 <main class="mdl--layout">
+	<form action="api/input.php" method="post" enctype="multipart/form-data">
 	<div class="mdl-grid center-items">
 	
 
@@ -50,13 +61,13 @@ This div here should center this log in screen on any page that the user is on
 				<div class="mdl-cell mdl-cell--4-col">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    		<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="firstname">First Name</label>
-				    		<input class="mdl-textfield__input" id="firstname"/>
+				    		<input class="mdl-textfield__input" id="firstname" name="firstname" required/>
 					</div>
 			    	</div>
 			    	<div class="mdl-cell mdl-cell--4-col">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				    	<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="lastname">Last Name</label>
-				    	<input class="mdl-textfield__input" id="lastname"/>
+				    		<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="lastname">Last Name</label>
+				    		<input class="mdl-textfield__input" id="lastname" name="lastname" required/>
 					</div>
 			    	</div>
 			    	<div class="mdl-layout-spacer"></div>
@@ -68,13 +79,13 @@ This div here should center this log in screen on any page that the user is on
 				<div class="mdl-cell mdl-cell--4-col">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    		<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="email">College Email</label>
-				    		<input class="mdl-textfield__input" id="email"/>
+				    		<input class="mdl-textfield__input" id="email" name="email" required/>
 					</div>
 			    	</div>
 			    	<div class="mdl-cell mdl-cell--4-col">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    	<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="major">Major</label>
-				    	<input class="mdl-textfield__input" id="major"/>
+				    	<input class="mdl-textfield__input" id="major" name="major"/>
 					</div>
 			    	</div>
 			    	<div class="mdl-layout-spacer"></div>
@@ -86,13 +97,13 @@ This div here should center this log in screen on any page that the user is on
 				<div class="mdl-cell mdl-cell--4-col">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    		<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">Password</label>
-				    		<input class="mdl-textfield__input" id="password1" type="password"/>
+				    		<input class="mdl-textfield__input" id="password1" type="password" name="password1" required/>
 					</div>
 			    	</div>
 			    	<div class="mdl-cell mdl-cell--4-col">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    	<label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">Re-enter Password</label>
-				    	<input class="mdl-textfield__input" id="password2" type="password"/>
+				    	<input class="mdl-textfield__input" id="password2" type="password" name="password2" required/>
 					</div>
 			    	</div>
 			    	<div class="mdl-layout-spacer"></div>
@@ -102,32 +113,56 @@ This div here should center this log in screen on any page that the user is on
 			<div class="content-grid mdl-grid">
 				<div class="mdl-layout-spacer"></div>
                     		<!-- Floating Multiline Textfield -->
-				<form action="#">
 				  <div class="mdl-textfield mdl-js-textfield wide">
-				    <textarea class="mdl-textfield__input " type="text" rows= "2" id="description" ></textarea>
+				    <textarea class="mdl-textfield__input " type="text" rows= "2" id="description" name="description"></textarea>
 				    <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">A brief description of yourself</label>
 				  </div>
-				</form>
 
 			</div>
+			
+
+			<div class="content-grid mdl-grid">
+				<div class="mdl-layout-spacer"></div>
+				<div class="mdl-cell mdl-cell--4-col">
+					<label class="mdl-color-text--blue-grey-600"> Upload a Profile Picture</label>
+				
+				</div>
+			    	<div class="mdl-cell mdl-cell--4-col">
+					<form>
+						<input type="file" name="filetoupload" id="filetoupload"> 
+					 </form>
+
+			    	</div>
+			    	<div class="mdl-layout-spacer"></div>
+
+			</div>
+
+
 
 
 			<div class="content-grid mdl-grid">
 				<div class="content-grid mdl-grid">
                     			<div class="mdl-cell mdl-cell--12-col">
-                        			<button onclick="window.location = 'feed.php'" class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+                        			<button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit">
                            			Sign Up
                         			</button>
                     </div>
                 </div>
 			
-			</div>
+		</div>
 		
 		</div>
-
+	</form>
 	</div>
 </main>
 
 <script src="static/js/material.min.js"></script>
+
+<script>
+
+
+
+
+</script>
 
 </html>

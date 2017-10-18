@@ -5,7 +5,6 @@
  * Date: 9/20/17
  * Time: 1:31 PM
  */
-<?php
 require_once 'config.php';
 echo "Hello World! <br> <br>";
 

@@ -1,5 +1,6 @@
-.mdl-card__title > img {
-    max-width: 100%;
+#buboard_logo {
+    width: 100%;
+    padding: 0;
 }
 
 .mdl-layout {
@@ -8,5 +9,15 @@
 }
 
 body {
-    background-color: #80d8ff;
+    background-image: url('/static/image/corktile.jpg');
+    background-attachment: local;
+}
+
+#animationGrid {
+    padding: 0;
+    transition: all 5s;
+}
+
+#sliding_buboard_logo {
+    transition: all 5s;
 }

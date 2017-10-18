@@ -1,0 +1,41 @@
+
+
+.card-profile {
+	width: auto;
+	color: white;
+	background-color: #4ca6a6;
+	background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.5) 35px, rgba(255,255,255,.5) 70px);
+}
+
+.mdl-card__media {
+	float: left;
+}
+.content {
+	padding-left: 50px;
+	float: left;
+	color: white;
+}
+
+
+.mdl-button {
+	
+	float: right;
+}
+
+img{
+	width: 150px;
+	height: 150px;
+	
+}
+.mdl-list{
+	width: 70%;
+	margin: auto;
+	margin-top: 10px;
+}
+h4 {
+	font-weight: bolder;
+}
+p {
+	font-weight: bold;
+	font-size:16px;
+}

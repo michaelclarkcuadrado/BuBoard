@@ -1,17 +1,19 @@
+.material-icons {
+    color: white;
+}
+
+/* Start Post Related CSS*/
+#postsContentPanel {
+    background-image: url('/static/image/corktile.jpg');
+    background-attachment: local;
+}
+
 .mdl-card__title-text {
     color: white;
 }
 
 .post-image-attachments {
     font-size: smaller;
-}
-
-.material-icons {
-    color: white;
-}
-
-#postsContentPanel {
-    background-image: url('/static/image/corktile.jpg');
 }
 
 .post-authorship {
@@ -60,14 +62,24 @@
 }
 
 .thumbtack {
-    width:72px;
     position: absolute;
     left: calc(50% - 36px);
-    top: 2px;
+    top: -12px;
 }
 
 .postTitleCard {
-    padding-top: 45px;
+    padding-top: 35px;
 }
+
+.postOptionsMenu {
+    padding-top: 19px;
+}
+
+#postsView > .mdl-card {
+    overflow: initial;
+    height: fit-content;
+}
+
+/* End Post Related CSS*/
 =======
 >>>>>>> Stashed changes

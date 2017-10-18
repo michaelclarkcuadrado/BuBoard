@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body class="mdl-color--light-blue-A100">
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="postsContentPanel">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Local Feed</span>
@@ -29,9 +29,9 @@
     </div>
 
     <!-- Creates the main content of the page -->
-    <main class="mdl--layout__content" id="postsContentPanel">
+    <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
-            <div v-for="(post, post_index) in postsObj" class="mdl-card mdl-shadow--6dp mdl-cell mdl-cell--4-col">
+            <div v-for="(post, post_index) in postsObj" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                 <div class="postTitleCard mdl-card__title mdl-color--blue">
                     <img class="thumbtack" src="static/image/thumbtack.png">
                     <h2 class="mdl-card__title-text">
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mdl-card__menu">
+                <div class="mdl-card__menu postOptionsMenu">
                     <button :id=" post.post_id + 'cornermenu'"
                             class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="material-icons">more_vert</i>

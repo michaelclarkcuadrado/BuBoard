@@ -12,6 +12,7 @@
 
 #postsContentPanel {
     background-image: url('/static/image/corktile.jpg');
+    background-attachment: local;
 }
 
 .post-authorship {
@@ -67,4 +68,8 @@
 
 .postTitleCard {
     padding-top: 45px;
+}
+
+.postOptionsMenu {
+    padding-top: 29px;
 }

@@ -73,7 +73,7 @@ De squish the card
 -->
 
 <main class="mdl--layout">
-	<form action="api/input.php" method="post" enctype="multipart/form-data">
+	<form action="api/newProfileSubmit.php" method="post" enctype="multipart/form-data">
         <div class="mdl-grid center">
             <div class="mdl-card--border mainbody mdl-shadow--8dp">
                 <div class="mdl-grid center-items mdl-shadow--8dp">

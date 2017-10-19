@@ -45,7 +45,7 @@ $profile_data = mysqli_fetch_assoc($data)
 
     <main>
         <div class="card-profile mdl-shadow--2dp">
-            <img id="profile_image" src="<?=(isset($profile_data['profile_id']) ? '/usercontent/user_avatars/'.$profile_id.'.jpg' : '/static/image/portrait.jpg')?>">
+            <img id="profile_image" src="<?=($profile_data['has_submitted_photo'] > 0 ? '/usercontent/user_avatars/'.$profile_id.'.jpg' : '/static/image/portrait.jpg')?>">
             <div class="content">
                 <h4><?= $profile_data['real_name'] ?></h4>
                 <p><?= $profile_data['email_address'] ?><br>

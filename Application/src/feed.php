@@ -45,9 +45,11 @@
                     <ul class="post-authorship mdl-list">
                         <li class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
-                              <i v-if="post.has_submitted_photo == 0" class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" class="mdl-list__item-avatar">
-                                <span>{{post.real_name}}</span>
+                                <div style="cursor: pointer" v-on:click="window.location='profile.php?id=' + post.profile_id">
+                                    <i v-if="post.has_submitted_photo == 0" class="material-icons mdl-list__item-avatar">person</i>
+                                    <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" class="mdl-list__item-avatar">
+                                    <span>{{post.real_name}}</span>
+                                </div>
                                 <i :id="post.post_id + '-following'" v-bind:class="[post.isSubscribed ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">rss_feed</i>
                                 <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
                                     <span v-if="post.isSubscribed">Unsubscribe</span>
@@ -102,7 +104,7 @@
                 self.postsObj = data;
             });
         },
-        updated: function(){
+        updated: function () {
             componentHandler.upgradeDom();
         },
         methods: {

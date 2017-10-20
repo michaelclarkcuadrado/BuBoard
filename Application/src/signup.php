@@ -191,6 +191,11 @@
         var password2 = document.getElementById("password2").value;
 
 
+        if (firstname == "" && lastname==""){
+            alert("Must supply a first and last name");
+            return false;
+        }
+
         if (firstname == ""){
             alert("Must supply an first name");
             return false;
@@ -217,7 +222,8 @@
         }
 
         if (password1 == "" || password2 == ""){
-            alert("Must supply a password")
+            alert("Must supply a password");
+            return false;
         }
 
         if (password1 != password2){

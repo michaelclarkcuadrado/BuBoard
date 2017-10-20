@@ -8,6 +8,8 @@ $description = $_POST['description'];
 $password1 = $_POST['password1'];
 $password2 = $_POST['password2'];
 
+
+
 if ($password1 === $password2) {
     $posts_queryresult = mysqli_query($mysqli, "
       INSERT INTO `buboard_profiles` (`real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `profile_desc`, `has_submitted_photo`)
@@ -18,6 +20,8 @@ if ($password1 === $password2) {
 }
 
 
+
 ?>
+
 
 <meta http-equiv="refresh" content="0;URL=../feed.php"/>

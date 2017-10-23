@@ -1,8 +1,14 @@
+.mdl-layout__header {
+	position: fixed;
+	top:0;
+}
 .card-profile {
+	
+	margin-top:50px;
     display: inline-block;
     width: 100%;
     color: white;
-    background-color: #4ca6a6;
+    background-color: #7e57c2;
 }
 
 .mdl-card__media {
@@ -13,27 +19,34 @@
     width: 150px;
     height: 150px;
     border-radius:50%;
-    padding-left: 16px;
-    padding-bottom: 16px;
-    padding-top: 16px;
+    padding: 16px;
+	margin: auto;
+	float: left;
 }
 
 .content {
-    background-color: rgba(255,255,255,0.2);
+  /*  background-color: rgba(255,255,255,0.2);*/
     border-radius: 10px;
     vertical-align: middle;
     width: initial;
     color: white;
     display: inline-block;
     margin-left: 16px;
-    padding:5px
+    padding:5px;
+	
 }
 
 #followBtn {
     float: right;
-    margin-right: 16px;
-    margin-top:16px;
-    margin-bottom:16px;
+    margin: 20px;
+	background-color: #512da8;
+	-webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+#followBtn:hover {
+	background-color: rgba(255,255,255,0.2);;
+	color: white;
 }
 
 h4 {
@@ -106,4 +119,8 @@ p {
 	display:block;
 	margin: auto;
 	padding-top: 30px;
+}
+
+.example {
+	text-align:center;
 }

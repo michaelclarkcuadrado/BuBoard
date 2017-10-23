@@ -21,7 +21,7 @@ $profile_data = mysqli_fetch_assoc($data)
     <link rel="stylesheet" href="static/css/profile.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="mdl-color--light-blue-A100">
+<body class="mdl-color--blue-50">
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
@@ -56,17 +56,34 @@ $profile_data = mysqli_fetch_assoc($data)
             <button id="followBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                 <i class="material-icons">add_box</i>Follow
             </button>
-			
 			<div id="myModal" class="modal">
 				<div class="modal-content">
 					<span class="close">&times;</span>
 					<img id="checkmark" src="static/image/check_mark.png">
 					<h3>Congrats!</h3>
-					<p>you have successfully followed  <u><?= $profile_data['real_name'] ?></u></p>
+					<p>you have successfully followed  <u><?= $profile_data['real_name'] ?></u>.</p>
 				</div>	
 			</div>
         </div>
-		<div>
+		<div class="example">
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+			<p>Some text some text some text some text..</p>
+
+
 		</div>
 
     </main>

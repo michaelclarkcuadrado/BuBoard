@@ -6,7 +6,9 @@ if (isset($_GET['id'])) {
     die("<script>window.location ='/feed.php'</script>");
 }
 $data = mysqli_query($mysqli, "select profile_id, real_name, email_address, profile_desc, has_submitted_photo from buboard_profiles where profile_id = '$profile_id'");
+
 $profile_data = mysqli_fetch_assoc($data)
+
 
 ?>
 
@@ -54,11 +56,40 @@ $profile_data = mysqli_fetch_assoc($data)
             <button id="followBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                 <i class="material-icons">add_box</i>Follow
             </button>
+			
+			<div id="myModal" class="modal">
+				<div class="modal-content">
+					<span class="close">&times;</span>
+					<img id="checkmark" src="static/image/check_mark.png">
+					<h3>Congrats!</h3>
+					<p>you have successfully followed  <u><?= $profile_data['real_name'] ?></u></p>
+				</div>	
+			</div>
         </div>
+		<div>
+		</div>
 
     </main>
 </div>
 </body>
 <script src="static/js/material.min.js"></script>
-
+<script>
+	var modal = document.getElementById("myModal");
+	var btn = document.getElementById("followBtn");
+	var span = document.getElementsByClassName("close")[0];
+	
+	btn.onclick = function(){
+			modal.style.display = "block";
+	}
+	
+	span.onclick = function() {
+			modal.style.display = "none";
+	}
+	
+	window.onclick = function(event) {
+		if(event.target == modal) {
+			modal.style.display = "none";
+		}
+	}
+</script>
 </html>

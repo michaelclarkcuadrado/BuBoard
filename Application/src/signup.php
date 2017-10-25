@@ -19,7 +19,6 @@
 <style>
 
     .mdl-grid.center-items {
-        background-color: white;
         width: 100%;
         height: 100%;
         overflow: auto;
@@ -45,19 +44,15 @@
     }
 
     .text{
-        border-style: solid;
         border-color: gray;
-        height: 50px;
-        border-radius: 10px;
-        border-bottom: none;
+        border-style: solid;
+        border-radius: 20px;
     }
 
     .wide{
-        border-style: solid;
         border-color: gray;
-        height: 80px;
-        border-radius: 10px;
-        border-bottom: none;
+        border-style: solid;
+        border-radius: 20px;
     }
 
 
@@ -89,7 +84,7 @@
 <main class="mdl--layout">
 	<form name="mainform"  method="post" onsubmit="return validateForm()" action="api/newProfileSubmit.php" enctype="multipart/form-data">
         <div class="mdl-grid mainbody mdl-shadow--8dp">
-            <div class="mdl-grid center-items mdl-shadow--8dp">
+            <div class="mdl-grid center-items mdl-shadow--8dp mdl-color--grey-100">
 
                 <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
                     <img class="thumbtack" src="static/image/thumbtack.png">
@@ -163,7 +158,7 @@
                 </div>
                 <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
                 <form>
-                    <input class="mdl-button" type="file" name="filetoupload" id="filetoupload">
+                    <input class="mdl-button" type="file" name="fileToUpload" id="fileToUpload">
                  </form>
 
                 </div>
@@ -183,7 +178,6 @@
 <script>
 
     function validateForm(){
-
         var firstname = document.getElementById("firstname").value;
         var lastname = document.getElementById("lastname").value;
         var email = document.getElementById("email").value;

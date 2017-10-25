@@ -9,12 +9,12 @@ require 'PHPMailer/src/Exception.php';
 
 require '../config.php';
 
-$firstname = $_POST['firstname'];
-$lastname = $_POST['lastname'];
-$email = $_POST['email'];
-$description = $_POST['description'];
-$password1 = $_POST['password1'];
-$password2 = $_POST['password2'];
+$firstname = mysqli_real_escape_string($mysqli, $_POST['firstname']);
+$lastname = mysqli_real_escape_string($mysqli, $_POST['lastname']);
+$email = mysqli_real_escape_string($mysqli, $_POST['email']);
+$description = mysqli_real_escape_string($mysqli, $_POST['description']);
+$password1 = mysqli_real_escape_string($mysqli, $_POST['password1']);
+$password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
 
 
 

@@ -21,7 +21,7 @@ $profile_data = mysqli_fetch_assoc($data)
     <link rel="stylesheet" href="static/css/profile.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="mdl-color--blue-50">
+<body class="mdl-color--blue-50" style="height:1500px">
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
@@ -66,34 +66,23 @@ $profile_data = mysqli_fetch_assoc($data)
 			</div>
         </div>
 		<div class="example">
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-			<p>Some text some text some text some text..</p>
-
-
+			
+			<button id="followBtn2" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                <i class="material-icons">add_box</i>Follow
+            </button>
 		</div>
+		
 
     </main>
+
 </div>
-</body>
+
 <script src="static/js/material.min.js"></script>
 <script>
 	var modal = document.getElementById("myModal");
 	var btn = document.getElementById("followBtn");
 	var span = document.getElementsByClassName("close")[0];
+	var btn2 = document.getElementById("followBtn2");
 	
 	btn.onclick = function(){
 			modal.style.display = "block";
@@ -108,5 +97,17 @@ $profile_data = mysqli_fetch_assoc($data)
 			modal.style.display = "none";
 		}
 	}
+	window.onscroll = function(){myFunction()};
+	function myFunction() {
+		
+		if (document.body.scrollTop > 150 ||document.documentElement.scrollTop > 150){
+			document.getElementById("followBtn2").style.visibility = "visible";
+			
+		}
+		else {
+			document.getElementById("followBtn2").style.visibility = "hidden";
+		}
+	}
 </script>
+</body>
 </html>

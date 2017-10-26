@@ -49,6 +49,12 @@
 	color: white;
 }
 
+#followBtn2 {
+	position: fixed;
+	bottom: 5%;
+	right: 3%;
+	visibility: hidden;
+}
 h4 {
     font-weight: bolder;
 }

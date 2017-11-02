@@ -82,7 +82,7 @@
 
 
 <main class="mdl--layout">
-	<form name="mainform"  method="post" onsubmit="return validateForm()" action="api/newProfileSubmit.php" enctype="multipart/form-data">
+	<form name="mainform"  method="POST" onsubmit="return validateForm()" action="api/newProfileSubmit.php" enctype="multipart/form-data">
         <div class="mdl-grid mainbody mdl-shadow--8dp">
             <div class="mdl-grid center-items mdl-shadow--8dp mdl-color--grey-100">
 
@@ -164,7 +164,7 @@
                 </div>
 
                 <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
-                    <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit">
+                    <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit" value="upload">
                     Sign Up
                     </button>
                 </div>
@@ -178,6 +178,7 @@
 <script>
 
     function validateForm(){
+        return true;
         var firstname = document.getElementById("firstname").value;
         var lastname = document.getElementById("lastname").value;
         var email = document.getElementById("email").value;

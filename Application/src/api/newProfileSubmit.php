@@ -32,6 +32,11 @@ if ($password1 === $password2) {
     ");
 
 
+
+
+
+
+
     //The massage below should only work for a local machines link, as we dont have an actual web address yet
     $message =
     "    
@@ -83,9 +88,12 @@ if ($password1 === $password2) {
 
 
 
+
+
 } else {
 
 }
+
 
 
 
@@ -93,7 +101,9 @@ if ($password1 === $password2) {
 
 <html>
 <script type="text/javascript">
+
     document.body.innerHTML = '';
+
 </script>
 <head>
     <title>Welcome To BuBoard</title>

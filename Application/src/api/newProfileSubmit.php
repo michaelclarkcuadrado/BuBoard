@@ -19,7 +19,6 @@ $password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
 
 
 
-if ($password1 === $password2) {
 
 
     // create a random confirm code string
@@ -31,6 +30,51 @@ if ($password1 === $password2) {
       VALUES ('$firstname $lastname', NOW(), '$password1', '$confirmcode', '$email', 0, '$description', 0);
     ");
 
+
+
+
+    $posts_queryresult2 = mysqli_query($mysqli, "
+      SELECT max(profile_id) 
+      FROM buboard_profiles;
+      ");
+
+    $result = mysqli_fetch_row($posts_queryresult2);
+
+    if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
+        switch ($_FILES['fileToUpload']["error"]) {
+            case UPLOAD_ERR_OK:
+                $target = "../usercontent/user_avatars/";
+                $target = $target . basename($_FILES['fileToUpload']['name']);
+
+
+                $uploadOk = 1;
+
+                if (file_exists($target_file)) {
+                    echo "Sorry, file already exists.";
+                    $uploadOk = 0;
+                }
+
+                if (pathinfo($target, PATHINFO_EXTENSION) != "jpg"){
+                    $uploadOk = 0;
+                }
+
+                if ($uploadOk == 1){
+                    $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
+
+                    if ($isUploaded) {
+                        $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
+
+                    } else {
+                        $status = "Sorry, there was a problem uploading your file.";
+                    }
+
+                    $picture_id = $result[0];
+
+                    rename("$target", "../usercontent/user_avatars/$picture_id.jpg");
+                    break;
+                }
+        }
+    }
 
 
 
@@ -88,9 +132,7 @@ if ($password1 === $password2) {
 
 
 
-} else {
 
-}
 
 
 

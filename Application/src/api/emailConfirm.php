@@ -14,8 +14,7 @@ $row = mysqli_fetch_assoc($result);
 $db_code = $row['email_confirmation_secret'];
 
 
-echo $confirmcode;
-echo $db_code;
+
 
 if ($confirmcode === $db_code){
     $result2 = mysqli_query($mysqli, "

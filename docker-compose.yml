@@ -7,6 +7,12 @@ services:
    - ./Application/src:/var/www/html
   ports:
    - 80:80
+  environment:
+    - "HOSTNAME=localhost"
+    - "smtpUser=buboard01@gmail.com"
+    - "smtpPassword=buboardpassword"
+    - "smtpHost=smtp.gmail.com"
+    - "smtpPort=587"
   
  buboard-database:
   build: ./Database

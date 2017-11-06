@@ -42,7 +42,7 @@ if ($password1 === $password2) {
     "    
     Confirm Your Email
     Click the Link below to verify your account
-    http://192.168.99.100/api/emailConfirm.php?email=$email&confirmcode=$confirmcode
+    http://".getenv('HOSTNAME')."/api/emailConfirm.php?email=$email&confirmcode=$confirmcode
     ";
 
 
@@ -52,17 +52,15 @@ if ($password1 === $password2) {
         //Server settings
         $mail->SMTPDebug = 2;                                 // Enable verbose debug output
         $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        $mail->Host = getenv('smtpHost');  // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
-        $mail->Username = 'buboard01@gmail.com';                 // SMTP username
-        $mail->Password = 'buboardpassword';                           // SMTP password
+        $mail->Username = getenv('smtpUser');                 // SMTP username
+        $mail->Password = getenv('smtpPassword');                           // SMTP password
         $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = 587;                                    // TCP port to connect to
+        $mail->Port = getenv('smtpPort');                                    // TCP port to connect to
         //Recipients
         $mail->setFrom('from@example.com', 'BuBoard');
         $mail->addAddress($email, 'Buboard User');     // Add a recipient
-        $mail->addReplyTo('info@example.com', 'Information');
-        //$mail->addCC('cc@example.com');
         //$mail->addBCC('bcc@example.com');
 
         //Attachments
@@ -78,7 +76,7 @@ if ($password1 === $password2) {
         echo "World";
         echo 'Confirmation Email has been sent. Please confirm the email and then log onto Buboard';
     } catch (Exception $e) {
-        echo 'Message could not be sent.';
+        error_log('Message could not be sent.');
         //echo 'Mailer Error: ' . $mail->ErrorInfo;
     }
 

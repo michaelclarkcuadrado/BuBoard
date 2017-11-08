@@ -16,237 +16,94 @@ $description = mysqli_real_escape_string($mysqli, $_POST['description']);
 $password1 = mysqli_real_escape_string($mysqli, $_POST['password1']);
 $password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
 
+// create a random confirm code string
+$confirmcode = rand();
 
 
+//what if the passwords don't match? or are empty??
 
+if($password1 === $password2){
+    $hash = password_hash($password1, PASSWORD_DEFAULT);
+} else die();
 
-
-    // create a random confirm code string
-    $confirmcode = rand();
-
-
-    $posts_queryresult = mysqli_query($mysqli, "
+$posts_queryresult = mysqli_query($mysqli, "
       INSERT INTO `buboard_profiles` (`real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `profile_desc`, `has_submitted_photo`)
-      VALUES ('$firstname $lastname', NOW(), '$password1', '$confirmcode', '$email', 0, '$description', 0);
+      VALUES ('$firstname $lastname', NOW(), '$hash', '$confirmcode', '$email', 0, '$description', 0);
     ");
 
+$profile_id = mysqli_insert_id($mysqli);
+
+if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
+    switch ($_FILES['fileToUpload']["error"]) {
+        case UPLOAD_ERR_OK:
+            $target = "../usercontent/user_avatars/";
+            $target = $target . basename($_FILES['fileToUpload']['name']);
 
 
+            $uploadOk = 1;
 
-    $posts_queryresult2 = mysqli_query($mysqli, "
-      SELECT max(profile_id) 
-      FROM buboard_profiles;
-      ");
+            if (file_exists($target_file)) {
+                echo "Sorry, file already exists.";
+                $uploadOk = 0;
+            }
 
-    $result = mysqli_fetch_row($posts_queryresult2);
+            if (pathinfo($target, PATHINFO_EXTENSION) != "jpg") {
+                $uploadOk = 0;
+            }
 
-    if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
-        switch ($_FILES['fileToUpload']["error"]) {
-            case UPLOAD_ERR_OK:
-                $target = "../usercontent/user_avatars/";
-                $target = $target . basename($_FILES['fileToUpload']['name']);
+            if ($uploadOk == 1) {
+                $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
 
+                if ($isUploaded) {
+                    $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
 
-                $uploadOk = 1;
-
-                if (file_exists($target_file)) {
-                    echo "Sorry, file already exists.";
-                    $uploadOk = 0;
+                } else {
+                    $status = "Sorry, there was a problem uploading your file.";
                 }
 
-                if (pathinfo($target, PATHINFO_EXTENSION) != "jpg"){
-                    $uploadOk = 0;
-                }
-
-                if ($uploadOk == 1){
-                    $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
-
-                    if ($isUploaded) {
-                        $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
-
-                    } else {
-                        $status = "Sorry, there was a problem uploading your file.";
-                    }
-
-                    $picture_id = $result[0];
-
-                    rename("$target", "../usercontent/user_avatars/$picture_id.jpg");
-                    break;
-                }
-        }
+                rename("$target", "../usercontent/user_avatars/$profile_id.jpg");
+            }
     }
+}
 
 
-
-
-
-
-    //The massage below should only work for a local machines link, as we dont have an actual web address yet
-    $message =
-    "    
-    Confirm Your Email
-    Click the Link below to verify your account
-    http://".getenv('HOSTNAME')."/api/emailConfirm.php?email=$email&confirmcode=$confirmcode
+//The massage below should only work for a local machines link, as we dont have an actual web address ye
+$confirmLink = "http://" . getenv('HOSTNAME') . "/api/emailConfirm.php?email=$email&confirmcode=$confirmcode";
+$message =
+    "   
+    <html>
+    Follow the link to verify your new buboard account:
+    
+    <a href='$confirmLink'>$confirmLink</a>
+    </html>
     ";
 
 
-
-    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-    try {
-        //Server settings
-        $mail->SMTPDebug = 2;                                 // Enable verbose debug output
-        $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = getenv('smtpHost');  // Specify main and backup SMTP servers
-        $mail->SMTPAuth = true;                               // Enable SMTP authentication
-        $mail->Username = getenv('smtpUser');                 // SMTP username
-        $mail->Password = getenv('smtpPassword');                           // SMTP password
-        $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = getenv('smtpPort');                                    // TCP port to connect to
-        //Recipients
-        $mail->setFrom('from@example.com', 'BuBoard');
-        $mail->addAddress($email, 'Buboard User');     // Add a recipient
-        //$mail->addBCC('bcc@example.com');
-
-        //Attachments
-        //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-        //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-        //Content
-        $mail->isHTML(true);                                  // Set email format to HTML
-        $mail->Subject = 'Email Confirmation for Buboard';
-        $mail->Body    = $message;
-
-        echo "Hello";
-        $mail->send();
-        echo "World";
-        echo 'Confirmation Email has been sent. Please confirm the email and then log onto Buboard';
-    } catch (Exception $e) {
-        error_log('Message could not be sent.');
-        //echo 'Mailer Error: ' . $mail->ErrorInfo;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
+$mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+try {
+    //Server settings
+    $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->Host = getenv('smtpHost');  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username = getenv('smtpUser');                 // SMTP username
+    $mail->Password = getenv('smtpPassword');                           // SMTP password
+    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->Port = getenv('smtpPort');                                    // TCP port to connect to
+    //Recipients
+    $mail->setFrom(getenv('smtpUser'), 'BuBoard');
+    $mail->addAddress($email, 'Buboard User');     // Add a recipient
+    //Content
+    $mail->isHTML(true);                                  // Set email format to HTML
+    $mail->Subject = ucfirst($firstname) . ", welcome to Buboard!";
+    $mail->Body = $message;
+    $mail->send();
+} catch (Exception $e) {
+    error_log('Message could not be sent.');
+}
 
 ?>
 
-<html>
-<script type="text/javascript">
-
-    document.body.innerHTML = '';
-
-</script>
-<head>
-    <title>Welcome To BuBoard</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="../static/css/material.min.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/signup.css"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<style>
-
-    .mdl-grid.center-items {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-    }
-
-    .main{
-        padding-top: 20px;
-    }
-
-    .mainbody{
-        text-align:center;
-        background-color: #80d8ff;
-        height: 50%;
-        width: 60%;
-        align-items: center;
-        padding-top: 20px;
-        padding-bottom: 20px;
-    }
-
-    .title{
-        text-align:center;
-    }
-    body {
-        background-image: url('../static/image/corktile.jpg');
-        background-attachment: local;
-        padding-top: 20px;
-    }
-
-    .text{
-        border-color: gray;
-        border-style: solid;
-        border-radius: 20px;
-    }
-
-    .wide{
-        border-color: gray;
-        border-style: solid;
-        border-radius: 20px;
-    }
-
-
-
-    @media (max-width: 700px) {
-        .mdl-grid.center-items {
-            background-color: white;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-        }
-
-        .mainbody{
-            background-color: #80d8ff;
-            height: 90%;
-            width: 92%;
-            align-items: center;
-            padding-top: 15px;
-            padding-bottom: 15px;
-        }
-    }
-
-
-</style>
-
-<main class="mdl--layout main">
-    <form name="mainform"  method="post" onsubmit="return validateForm()" action="api/newProfileSubmit.php" enctype="multipart/form-data">
-        <div class="mdl-grid mainbody mdl-shadow--8dp">
-            <div class="mdl-grid center-items mdl-shadow--8dp mdl-color--grey-100">
-
-                <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
-                    <img class="thumbtack" src="../static/image/thumbtack.png">
-                </div>
-                <h2 class="mdl-card__title-text mdl-color-text--blue-grey-600 title">A email verification has been sent to the provided email. Once you have verified your email, please sign in</h2>
-
-                <form>
-                    <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone"></div>
-                    <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
-                        <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="button" onclick="window.location.href='http://192.168.99.100/'">
-                            Log In
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </form>
-</main>
-
-
-</html>
-
-
-
+<script>window.location = "/index.php?message=Confirmation Email has been sent."</script>
 
 
 

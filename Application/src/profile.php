@@ -1,5 +1,7 @@
 <?php
 require_once 'config.php';
+$userinfo = buboard_authenticate($mysqli, $authenticationKey);
+
 if (isset($_GET['id'])) {
     $profile_id = mysqli_real_escape_string($mysqli, $_GET['id']);
 } else {

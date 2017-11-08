@@ -1,3 +1,8 @@
+<?php
+require_once 'config.php';
+$userinfo = buboard_authenticate($mysqli, $authenticationKey);
+?>
+
 <!doctype html>
 <html>
 <head>
@@ -25,6 +30,7 @@
             <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
             <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i> Personal Feed</a>
             <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
+            <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
         </nav>
     </div>
 
@@ -79,7 +85,6 @@
                     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                         :for=" post.post_id + 'cornermenu'">
                         <li class="mdl-menu__item">Follow User</li>
-                        <li class="mdl-menu__item">RSVP</li>
                         <li class="mdl-menu__item">Delete Post</li>
                     </ul>
                 </div>
@@ -93,6 +98,12 @@
 <script src="static/js/vue.min.js"></script>
 <script src="static/js/jquery.min.js"></script>
 <script>
+    function logout(){
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        window.location.replace('/');
+    }
+
     var allPostsVue = new Vue({
         el: '#postsView',
         data: {

@@ -5,7 +5,7 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
 if (isset($_GET['id'])) {
     $profile_id = mysqli_real_escape_string($mysqli, $_GET['id']);
 } else {
-    die("<script>window.location ='/feed.php'</script>");
+    $profile_id = $userinfo['profile_id'];
 }
 $data = mysqli_query($mysqli, "select profile_id, real_name, email_address, profile_desc, has_submitted_photo from buboard_profiles where profile_id = '$profile_id'");
 

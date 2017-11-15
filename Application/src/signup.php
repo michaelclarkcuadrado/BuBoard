@@ -44,15 +44,17 @@
     }
 
     .text{
-        border-color: gray;
-        border-style: solid;
-        border-radius: 20px;
+        border-color: lightgray;
+        border-style: double;
+        border-width: 5px;
+        border-radius: 10px;
     }
 
-    .wide{
-        border-color: gray;
-        border-style: solid;
-        border-radius: 20px;
+    .submit{
+        postion: fixed;
+        buttom: 5%;
+        right: 3%;
+
     }
 
 
@@ -133,38 +135,37 @@
                             <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">Password</label>
                             <input class="mdl-textfield__input" id="password1" type="password" name="password1" />
                     </div>
-                    </div>
-                    <div class="mdl-cell mdl-cell--6-col">
+                </div>
+                <div class="mdl-cell mdl-cell--6-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">Re-enter Password</label>
                         <input class="mdl-textfield__input" id="password2" type="password" name="password2" />
                     </div>
-                    </div>
-                    <div class="mdl-layout-spacer"></div>
+                </div>
+                <div class="mdl-layout-spacer"></div>
 
 
                 <div class="mdl-layout-spacer"></div>
-                <div class="mdl-cell mdl-cell--12-col">
-                      <div class="mdl-textfield mdl-js-textfield wide">
-                        <textarea class="mdl-textfield__input " type="text" rows= "2" id="description" name="description"></textarea>
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">A brief description of yourself</label>
+                <div class="mdl-cell mdl-cell--6-col">
+                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
+                          <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">A brief description of yourself</label>
+                          <textarea class="mdl-textfield__input " type="text" rows= "3" id="description" name="description"></textarea>
+
                       </div>
                 </div>
+                <div class="mdl-cell mdl-cell--6-col">
+                        <label class="mdl-color-text--blue-grey-600"> Upload a Profile Picture</label>
+                        <input class="mdl-button" type="file" name="fileToUpload" id="fileToUpload" />
+                    </div>
 
-
-                <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
-                    <label class="mdl-color-text--blue-grey-600"> Upload a Profile Picture</label>
-
-                </div>
-                <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
-                    <input class="mdl-button" type="file" name="fileToUpload" id="fileToUpload">
-                </div>
+                <div class="mdl-layout-spacer"></div>
 
                 <div class="mdl-cell--12-col-desktop mdl-cell--5-col-phone">
                     <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit" value="uploadImage">
                     Sign Up
                     </button>
                 </div>
+              </div>
             </div>
         </div>
 	</form>

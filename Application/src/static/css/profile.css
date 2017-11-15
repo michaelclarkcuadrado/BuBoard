@@ -4,7 +4,7 @@
 	top:0;
 }
 .card-profile {
-	
+
 	margin-top:50px;
     display: inline-block;
     width: 100%;
@@ -34,7 +34,8 @@
     display: inline-block;
     margin-left: 16px;
     padding:5px;
-	
+
+
 }
 
 #followBtn {
@@ -92,7 +93,7 @@ p {
     -webkit-animation-name: animateopen;
     -webkit-animation-duration: 0.5s;
     animation-name: animateopen;
-    animation-duration: 0.5s 
+    animation-duration: 0.5s
 }
 
 @keyframes animateopen {
@@ -109,15 +110,15 @@ p {
     float: right;
     font-size: 40px;
     font-weight: bold;
-	
+
 }
 
 .close:hover,
 .close:focus {
-    
+
     text-decoration: none;
     cursor: pointer;
-	color: teal; 
+	color: teal;
 }
 
 #checkmark {
@@ -154,12 +155,17 @@ p {
     margin-top: 10px;
     text-decoration: none;
     font-size: 17px;
-	width: 25%;
+		width: 25%;
+
 }
+
+
+
+
 
 /* Change the color of links on hover */
 .navbar a:hover {
-    
+
     color: white;
 }
 .mdl-layout__header-row a {
@@ -168,8 +174,4 @@ p {
 
 #followBtn2  {
 	bottom: 10%;
-}
-
-
-
 }

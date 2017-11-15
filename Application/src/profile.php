@@ -87,13 +87,13 @@ $profile_data = mysqli_fetch_assoc($data)
 
 <script src="static/js/material.min.js"></script>
 <script>
+    var isOwnProfile = <?=($userinfo['profile_id'] == $profile_id ? 'true' : 'false')?>;
 	var modal = document.getElementById("myModal");
 	var btn = document.getElementById("followBtn");
 	var span = document.getElementsByClassName("close")[0];
 	var btn2 = document.getElementById("followBtn2");
 
   var profile = document.getElementById("profile");
-//  profile.addEventListener("click", myFunction2());
 	btn.onclick = function(){
 			modal.style.display = "block";
 	};
@@ -121,11 +121,6 @@ $profile_data = mysqli_fetch_assoc($data)
 		}
 	};
 
-  function myFunction2() {
-
-    btn.style.visibility = "hidden";
-    btn2.style.visibility = "hidden";
-    }
     document.getElementById("edit").onclick = function(event){
       alert("click");
       document.getElementById("pName").contentEditable = true;

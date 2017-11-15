@@ -19,8 +19,46 @@ $password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
 // create a random confirm code string
 $confirmcode = rand();
 
+// Data check
 
-//what if the passwords don't match? or are empty??
+$check = true;
+
+if ($firstname == "" && $lastname==""){
+    $check = false;
+}
+
+if ($firstname == ""){
+    $check = false;
+}
+
+if ($lastname == ""){
+    $check = false;
+}
+
+if ($email == ""){
+    $check = false;
+}
+
+if($email.indexOf("@") == -1){
+    $check = false;
+}
+
+if ($email.indexOf("@gettysburg.edu") == -1){
+    $check = false;
+}
+
+if ($password1 == "" || $password2 == ""){
+    $check = false;
+}
+
+if ($password1 != $password2){
+    $check = false;
+}
+
+
+if (!$check){
+    header("location: ../signup.php");
+}
 
 if($password1 === $password2){
     $hash = password_hash($password1, PASSWORD_DEFAULT);

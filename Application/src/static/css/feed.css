@@ -2,6 +2,36 @@
     color: white;
 }
 
+/*
+    Fixed header has different widths on mobile and desktop
+*/
+.mdl-layout__header {
+    position: fixed;
+    top:0;
+}
+
+@media screen and (max-width: 1024px) {
+    .mdl--layout__content {
+        margin-top: 56px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .mdl--layout__content {
+        margin-top: 128px;
+    }
+}
+/*end header nonsense*/
+
+/* Categories sorting: underbar in desktop, swiping arrows on mobile*/
+ @media screen and (max-width:1024px) {
+     #desktopCategoriesSwitcher {
+         display: none;
+     }
+
+ }
+/*end categories sorting*/
+
 /* Start Post Related CSS*/
 #postsContentPanel {
     background-image: url('/static/image/corktile.jpg');
@@ -80,3 +110,4 @@
 }
 
 /* End Post Related CSS*/
+

@@ -40,21 +40,20 @@ $profile_data = mysqli_fetch_assoc($data)
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">BuBoard</span>
         <nav class="mdl-navigation mdl-color--blue-light_blue-800">
-            <a class="mdl-navigation__link" href="feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
-            <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i> Personal Feed</a>
-            <div id= "profile"><a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a></div>
-            <a class="mdl-navigation__link" href="help.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help</i> Help</a>
+            <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
+            <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
+            <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
         </nav>
     </div>
 
-		<div class="navbar">
-			      <a href="feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i></a>
-            <a  href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i></a>
-            <a  href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i></a>
-            <a href="help.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help</i></a>
-		</div>
+<!--		<div class="navbar">-->
+<!--			      <a href="feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i></a>-->
+<!--            <a  href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i></a>-->
+<!--            <a  href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i></a>-->
+<!--            <a href="help.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help</i></a>-->
+<!--		</div>-->
 
-    <main>
+    <main class="mdl--layout__content">
         <div class="card-profile mdl-shadow--2dp">
             <img id="profile_image" src="<?=($profile_data['has_submitted_photo'] > 0 ? '/usercontent/user_avatars/'.$profile_id.'.jpg' : '/static/image/portrait.jpg')?>">
             <div class="content">
@@ -133,6 +132,12 @@ $profile_data = mysqli_fetch_assoc($data)
 
 
     }
+    function logout() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        window.location.replace('/');
+    }
+
 
 </script>
 </body>

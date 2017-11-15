@@ -7,18 +7,49 @@
  */
 
 require '../config.php';
+$userinfo = buboard_authenticate($mysqli, $authenticationKey);
+$userID = $userinfo['profile_id'];
 
-//TODO get your own userid. this should be properly handled by authentication api when implemented
-$userID = '1';
+$curViewIsCategory = mysqli_real_escape_string($mysqli, $_GET['curViewIsCategory']);
+$curView = mysqli_real_escape_string($mysqli, $_GET['curView']);
+$latestPostCurView = mysqli_real_escape_string($mysqli, $_GET['latestPostCurView']);
 
-$posts_queryresult = mysqli_query($mysqli, "
-SELECT *
+/*Build query based on params*/
+$query = "SELECT
+  post_id,
+  post_by_user_id,
+  belongs_to_category,
+  post_contents,
+  post_title,
+  post_date,
+  profile_id,
+  real_name,
+  has_submitted_photo,
+  category_id,
+  category_name,
+  category_color,
+  attachment_id,
+  belongs_to_post_id,
+  post_attachment_num,
+  follower_id,
+  followee_id
 FROM buboard_posts
-JOIN buboard_profiles ON buboard_posts.post_by_user_id = buboard_profiles.profile_id
-JOIN post_categories ON buboard_posts.belongs_to_category = post_categories.category_id
-LEFT JOIN post_attachments ON buboard_posts.post_id = post_attachments.belongs_to_post_id 
-LEFT JOIN (SELECT * FROM profile_follows WHERE follower_id = '$userID') t1 ON post_by_user_id=followee_id
-");
+  JOIN buboard_profiles ON buboard_posts.post_by_user_id = buboard_profiles.profile_id
+  JOIN post_categories ON buboard_posts.belongs_to_category = post_categories.category_id
+  LEFT JOIN post_attachments ON buboard_posts.post_id = post_attachments.belongs_to_post_id
+  LEFT JOIN (SELECT * FROM profile_follows WHERE follower_id = '$userID') t1 ON post_by_user_id=followee_id
+  ";
+
+//TODO: This returns the wrong posts. Post nums should descend as someone scrolls down.
+if($latestPostCurView != -1){
+    $query .= " WHERE post_id < $latestPostCurView";
+}
+
+$query .= " ORDER BY post_date DESC LIMIT 10";
+
+/*End build query*/
+
+$posts_queryresult = mysqli_query($mysqli, $query);
 
 $formatted_posts = array();
 while($post = mysqli_fetch_assoc($posts_queryresult)){
@@ -46,4 +77,4 @@ while($post = mysqli_fetch_assoc($posts_queryresult)){
     }
 }
 
-echo json_encode($formatted_posts);
+echo json_encode(array_values($formatted_posts));

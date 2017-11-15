@@ -31,7 +31,6 @@ function buboard_login($mysqli, $authenticationKey) {
 }
 
 function buboard_authenticate($mysqli, $authenticationKey) {
-    error_log("TEST");
     if (!isset($_COOKIE['token']) || !isset($_COOKIE['username'])) {
         die("<script>window.location.replace('/')</script>");
     } else if (!hash_equals($_COOKIE['token'], crypt($_COOKIE['username'], $authenticationKey))) {

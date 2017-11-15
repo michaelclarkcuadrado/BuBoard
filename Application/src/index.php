@@ -33,11 +33,11 @@ if (isset($_GET['message'])) {
         <form action="index.php" method="post">
         <div class="mdl-typography--text-center"><?=($messagePresent ? $message : "")?></div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="username" type="email" id="login"/>
+            <input class="mdl-textfield__input" name="username" type="email" id="login" required/>
             <label class="mdl-textfield__label" for="login">Email</label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="password" type="password" id="password"/>
+            <input class="mdl-textfield__input" name="password" type="password" id="password" required/>
             <label class="mdl-textfield__label" for="password">Password</label>
         </div>
 

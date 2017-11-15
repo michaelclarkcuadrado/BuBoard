@@ -93,21 +93,21 @@ $profile_data = mysqli_fetch_assoc($data)
 	var btn2 = document.getElementById("followBtn2");
 
   var profile = document.getElementById("profile");
-  profile.addEventListener("click", myFunction2());
+//  profile.addEventListener("click", myFunction2());
 	btn.onclick = function(){
 			modal.style.display = "block";
-	}
+	};
 
 	span.onclick = function() {
 			modal.style.display = "none";
-	}
+	};
 
 
 	window.onclick = function(event) {
 		if(event.target == modal) {
 			modal.style.display = "none";
 		}
-	}
+	};
 
 	window.onscroll = function(){myFunction()};
 	function myFunction() {
@@ -119,7 +119,7 @@ $profile_data = mysqli_fetch_assoc($data)
 		else {
 			document.getElementById("followBtn2").style.visibility = "hidden";
 		}
-	}
+	};
 
   function myFunction2() {
 
@@ -131,12 +131,12 @@ $profile_data = mysqli_fetch_assoc($data)
       document.getElementById("pName").contentEditable = true;
 
 
-    }
+    };
     function logout() {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.replace('/');
-    }
+    };
 
 
 </script>

@@ -52,6 +52,17 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
     <!-- Creates the main content of the page -->
     <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
+            <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
+                <div class="postTitleCard mdl-card__title mdl-color--blue">
+                    <img class="thumbtack" src="static/image/thumbtack.png">
+                    <h2 class="mdl-card__title-text">
+                        Buboard Notice
+                    </h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    This view doesn't have any cards.
+                </div>
+            </div>
             <transition-group name="list" id="main" mode="out-in" tag="span">
                 <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
@@ -67,15 +78,15 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                         <ul class="post-authorship mdl-list">
                             <li class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
-                                <div style="cursor: pointer" v-on:click="window.location='profile.php?id=' + post.profile_id">
-                                    <i v-if="post.has_submitted_photo == 0" class="material-icons mdl-list__item-avatar">person</i>
-                                    <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" class="mdl-list__item-avatar">
-                                    <span>{{post.real_name}}</span>
-                                </div>
-                                <i :id="post.post_id + '-following'" v-bind:class="[post.isSubscribed ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">rss_feed</i>
-                                <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
-                                    <span v-if="post.isSubscribed">Unsubscribe</span>
-                                    <span v-else>Subscribe</span>
+                                <div>
+                                    <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer" class="material-icons mdl-list__item-avatar">person</i>
+                                    <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer" class="mdl-list__item-avatar">
+                                    <span v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer">{{post.real_name}}</span>
+                                    <i :id="post.post_id + '-following'" v-on:click="subscribe(post.profile_id)" v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">rss_feed</i>
+                                    <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
+                                        <span v-if="post.isSubscribed > 0">Unsubscribe</span>
+                                        <span v-else>Subscribe</span>
+                                    </div>
                                 </div>
                                 <span class="mdl-list__item-sub-title">{{post.post_date}}</span>
                             </span>
@@ -156,9 +167,9 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
             var self = this;
             this.getPosts();
             //scroll event handler - 100 px from bottom, pulls new posts
-            $('#postsContentPanel').on('scroll', function() {
+            $('#postsContentPanel').on('scroll', function () {
                 //self is the vue object, this is the postsContentPanel jquery object
-                if(!(self.scrollLock || self.isAtViewPaginationEnd)) {
+                if (!(self.scrollLock || self.isAtViewPaginationEnd)) {
                     if (this.scrollTop >= (this.scrollHeight - this.offsetHeight) - 100) {
                         self.getPosts();
                     }
@@ -166,6 +177,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
             });
         },
         updated: function () {
+//            console.log("DOM mdl upgraded");
             componentHandler.upgradeDom();
         },
         methods: {
@@ -208,11 +220,22 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                             self.latestPostCurView = smallestID;
                             //release scroll mutex
                             self.scrollLock = false;
-                        }).fail(function(){
-                            self.scrollLock = false;
-                            snack("Server Unavailable", 1200);
+                        }).fail(function () {
+                        self.scrollLock = false;
+                        snack("Server Unavailable", 1200);
                     });
                 }
+            },
+            subscribe: function(subscribeToID){
+                console.log('fire subscribe');
+                var self = this;
+                $.get('api/subscribe.php', {subscribeToID: subscribeToID}, function(){
+                    for(var i = 0; i < self.postsObj.length; i++){
+                        if(parseInt(self.postsObj[i]['profile_id']) == subscribeToID){
+                            self.postsObj[i]['isSubscribed'] = 1;
+                        }
+                    }
+                });
             },
             invertColor: function (hex, bw) {
                 // stolen from https://github.com/onury/invert-color MIT Licensed. -MC

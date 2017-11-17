@@ -84,12 +84,12 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                     <div class="post-contents">
                         {{post.post_contents}}
                     </div>
-                    <div v-if="Object.keys(post.attachments).length > 0" class="post-image-attachments">
+                    <div v-if="Object.keys(post.attachment_id).length > 0" class="post-image-attachments">
                         <br>
                         Attachments:
                         <div>
-                            <a v-for="attachment in post.attachments" target="_blank" :href="'usercontent/post_attachments/' + attachment.attachment_id + '.jpg'"><img
-                                        class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment.attachment_id + '.jpg'"></a>
+                            <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
+                                        class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
                         </div>
                     </div>
                 </div>
@@ -152,18 +152,17 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                     $.getJSON('api/getPosts.php', {
                             curViewIsCategory: this.curViewIsCategory,
                             curView: this.curView,
-                            latestPostCurView: this.latestPostCurView
+                            latestPostCurView: (this.latestPostCurView === Infinity ? -1 : this.latestPostCurView)
                         },
                         function (data) {
                             self.postsObj = self.postsObj.concat(data);
-                            var maxID = 0;
+                            var smallestID = Infinity;
                             for (var i = 0; i < self.postsObj.length; i++) {
-                                if (parseInt(self.postsObj[i]['post_id']) > maxID) {
-                                    maxID = parseInt(self.postsObj[i]['post_id']);
+                                if (parseInt(self.postsObj[i]['post_id']) < smallestID) {
+                                    smallestID = parseInt(self.postsObj[i]['post_id']);
                                 }
                             }
-                            self.latestPostCurView = maxID;
-                            //TODO test if pagination is done
+                            self.latestPostCurView = smallestID;
                         });
                 }
             },

@@ -53,6 +53,7 @@ if ($latestPostCurView != -1) {
     $query .= " WHERE post_id < $latestPostCurView";
 }
 
+//note: changes in the LIMIT here should be reflected in the getPosts JS function also
 $query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 10";
 
 /*End build query*/

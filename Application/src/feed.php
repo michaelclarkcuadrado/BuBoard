@@ -30,11 +30,11 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
         <div class="mdl-layout__header-row" id="desktopCategoriesSwitcher">
             <div class="mdl-layout-spacer"></div>
             <nav class="mdl-navigation">
-                <a class="mdl-navigation__link is-active" href="test">Latest</a>
-                <a class="mdl-navigation__link" href="test">Following</a>
+                <a class="mdl-navigation__link is-active" style="cursor: pointer" onclick="allPostsVue.changeView(0, 0)">Latest</a>
+                <a class="mdl-navigation__link" style="cursor: pointer" onclick="allPostsVue.changeView(1, 0)">Following</a>
                 <?php
                 while ($category = mysqli_fetch_assoc($categoriesQuery)) {
-                    echo "<a class=\"mdl-navigation__link\" href=\"test\">" . $category['category_name'] . "</a>";
+                    echo "<a class=\"mdl-navigation__link\" style=\"cursor: pointer\">" . $category['category_name'] . "</a>";
                 }
                 ?>
             </nav>
@@ -52,7 +52,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
     <!-- Creates the main content of the page -->
     <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
-            <transition-group name="list" id="main" tag="span">
+            <transition-group name="list" id="main" mode="out-in" tag="span">
                 <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
                         <img class="thumbtack" src="static/image/thumbtack.png">
@@ -155,11 +155,11 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
         mounted: function () {
             var self = this;
             this.getPosts();
-            //scroll event handler - 300 px from bottom, pulls new posts
+            //scroll event handler - 100 px from bottom, pulls new posts
             $('#postsContentPanel').on('scroll', function() {
                 //self is the vue object, this is the postsContentPanel jquery object
                 if(!(self.scrollLock || self.isAtViewPaginationEnd)) {
-                    if (this.scrollTop >= (this.scrollHeight - this.offsetHeight) - 300) {
+                    if (this.scrollTop >= (this.scrollHeight - this.offsetHeight) - 100) {
                         self.getPosts();
                     }
                 }
@@ -174,7 +174,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                 if (this.curViewIsCategory !== isCategory || this.curView !== viewID) {
                     this.curView = viewID;
                     this.curViewIsCategory = isCategory;
-                    this.latestPostCurView = 0;
+                    this.latestPostCurView = -1;
                     this.isAtViewPaginationEnd = false;
                     this.postsObj = [];
                     this.getPosts();

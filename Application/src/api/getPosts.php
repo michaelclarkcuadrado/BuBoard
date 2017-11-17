@@ -61,7 +61,7 @@ if ($curViewIsCategory == 0 && $curView == 1){
 }
 
 if ($latestPostCurView != -1) {
-    $query .= ($hasWhereStatement ? ' AND' : ' WHERE') . "post_ID < $latestPostCurView";;
+    $query .= ($hasWhereStatement ? ' AND' : ' WHERE') . " post_ID < $latestPostCurView";;
 }
 
 //note: changes in the LIMIT here should be reflected in the getPosts JS function also

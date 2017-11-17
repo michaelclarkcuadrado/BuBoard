@@ -39,11 +39,7 @@ if ($email == ""){
     $check = false;
 }
 
-if($email.indexOf("@") == -1){
-    $check = false;
-}
-
-if ($email.indexOf("@gettysburg.edu") == -1){
+if (!strpos($email, "@gettysburg.edu")){
     $check = false;
 }
 

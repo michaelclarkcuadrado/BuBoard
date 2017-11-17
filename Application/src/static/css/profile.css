@@ -186,3 +186,11 @@ p {
 #followBtn2  {
 	bottom: 10%;
 }
+#edit h4{
+	float:left;
+}
+#edit i{
+	float:left;
+	padding-top: 25px;
+	padding-left: 10px;
+}

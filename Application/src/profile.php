@@ -56,10 +56,16 @@ $profile_data = mysqli_fetch_assoc($data)
     <main class="mdl--layout__content">
         <div class="card-profile mdl-shadow--2dp">
             <img id="profile_image" src="<?=($profile_data['has_submitted_photo'] > 0 ? '/usercontent/user_avatars/'.$profile_id.'.jpg' : '/static/image/portrait.jpg')?>">
-            <div class="content">
-                <h4 id="pName"><?= $profile_data['real_name'] ?><span id= "edit"><i class="material-icons">edit</i></span></h4>
-                <div class= "personal" id="pDetail"><p><?= $profile_data['email_address'] ?><br>
-                    <?= $profile_data['profile_desc'] ?></p></div>
+            <div class="content" id="content">
+                <span id ="edit">
+                  <h4 id="pName"><?= $profile_data['real_name'] ?></h4>
+                  <i class="material-icons"id="editN" style="visibility:visible">edit</i>
+                  <i class="material-icons" id="editD" style="visibility:hidden">save</i>
+                  </br>
+                  <p><?= $profile_data['email_address'] ?><br>
+                  <?= $profile_data['profile_desc'] ?>
+                  <i class="material-icons">edit</i>
+                </span>
             </div>
             <button id="followBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                 <i class="material-icons">add_box</i>Follow
@@ -87,13 +93,12 @@ $profile_data = mysqli_fetch_assoc($data)
 
 <script src="static/js/material.min.js"></script>
 <script>
-    var isOwnProfile = <?=($userinfo['profile_id'] == $profile_id ? 'true' : 'false')?>;
+  var isOwnProfile = <?=($userinfo['profile_id'] == $profile_id ? 'true' : 'false')?>;
 	var modal = document.getElementById("myModal");
 	var btn = document.getElementById("followBtn");
 	var span = document.getElementsByClassName("close")[0];
 	var btn2 = document.getElementById("followBtn2");
-
-  var profile = document.getElementById("profile");
+  var x = document.getElementById("content");
 	btn.onclick = function(){
 			modal.style.display = "block";
 	};
@@ -120,13 +125,30 @@ $profile_data = mysqli_fetch_assoc($data)
 			document.getElementById("followBtn2").style.visibility = "hidden";
 		}
 	};
-
-    document.getElementById("edit").onclick = function(event){
-      alert("click");
+    document.getElementById("editN").onclick = function(event){
+      //alert("click");
       document.getElementById("pName").contentEditable = true;
-
+      document.getElementById("editN").style.display = "none";
+      document.getElementById("editD").style.visibility = "visible";
+      document.getElementById("editD").onclick = function(){
+      console.log(document.getElementById("pName").innerHTML);
+      alert("saved");
+      };
 
     };
+
+/*  document.getElementById("edit").onclick = function(){
+    var y = x.getElementsByClassName("material-icons");
+    if(y[0].style.visibility === 'visible'){
+      y[1].style.visibility = "visible";
+    //  y[0].style.display = "none";
+    }
+    if(y[1].style.visibility === 'visible'){
+      y[0].style.visibility = "visible";
+      y[1].style.display = "none";
+    }
+  };*/
+
     function logout() {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";

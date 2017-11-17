@@ -49,6 +49,7 @@
         border-style: double;
         border-width: 5px;
         border-radius: 10px;
+        margin: 5px;
     }
 
     .submit {
@@ -94,14 +95,14 @@
 
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="firstname">First Name</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="firstname">  First Name</label>
                         <input class="mdl-textfield__input" id="firstname" name="firstname"/>
                         <span class="mdl-textfield__error">Must enter a First Name</span>
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="lastname">Last Name</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="lastname">  Last Name</label>
                         <input class="mdl-textfield__input" id="lastname" name="lastname"/>
                     </div>
                 </div>
@@ -111,13 +112,13 @@
                 <div class="mdl-layout-spacer"></div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="email">College Email</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="email">  College Email</label>
                         <input class="mdl-textfield__input" id="email" name="email"/>
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="major">Major</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="major">  Major</label>
                         <input class="mdl-textfield__input" id="major" name="major"/>
                     </div>
                 </div>
@@ -127,13 +128,13 @@
                 <div class="mdl-layout-spacer"></div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">Password</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">  Password</label>
                         <input class="mdl-textfield__input" id="password1" type="password" name="password1"/>
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">Re-enter Password</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">  Re-enter Password</label>
                         <input class="mdl-textfield__input" id="password2" type="password" name="password2"/>
                     </div>
                 </div>
@@ -143,7 +144,7 @@
                 <div class="mdl-layout-spacer"></div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">A brief description of yourself</label>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">  A brief description of yourself</label>
                         <textarea class="mdl-textfield__input " type="text" rows="3" id="description" name="description"></textarea>
 
                     </div>

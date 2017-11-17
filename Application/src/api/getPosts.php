@@ -67,7 +67,6 @@ if ($latestPostCurView != -1) {
 //note: changes in the LIMIT here should be reflected in the getPosts JS function also
 $query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 10";
 
-error_log($query);
 /*End build query*/
 
 $posts_queryresult = mysqli_query($mysqli, $query);

@@ -227,7 +227,6 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                 }
             },
             subscribe: function(subscribeToID){
-                console.log('fire subscribe');
                 var self = this;
                 $.get('api/subscribe.php', {subscribeToID: subscribeToID}, function(){
                     for(var i = 0; i < self.postsObj.length; i++){

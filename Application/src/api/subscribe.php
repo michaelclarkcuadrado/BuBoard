@@ -14,5 +14,4 @@ if(isset($_GET['subscribeToID'])){
     mysqli_query($mysqli, "
     INSERT INTO profile_follows (follower_id, followee_id) VALUES ('$ownID', '$subscribeTo');  
     ");
-    echo "wassssupo";
 }

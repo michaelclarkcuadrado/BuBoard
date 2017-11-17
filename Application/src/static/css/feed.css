@@ -7,7 +7,7 @@
 */
 .mdl-layout__header {
     position: fixed;
-    top:0;
+    top: 0;
 }
 
 @media screen and (max-width: 1024px) {
@@ -21,15 +21,17 @@
         margin-top: 128px;
     }
 }
+
 /*end header nonsense*/
 
 /* Categories sorting: underbar in desktop, swiping arrows on mobile*/
- @media screen and (max-width:1024px) {
-     #desktopCategoriesSwitcher {
-         display: none;
-     }
+@media screen and (max-width: 1024px) {
+    #desktopCategoriesSwitcher {
+        display: none;
+    }
 
- }
+}
+
 /*end categories sorting*/
 
 /* Start Post Related CSS*/
@@ -104,9 +106,22 @@
     padding-top: 19px;
 }
 
-#postsView > .mdl-card {
+#main > .mdl-card {
     overflow: initial;
     height: fit-content;
+    display: inline-grid;
+}
+
+/*
+Post animations
+*/
+.list-enter-active, .list-leave-active {
+    transition: all 1s;
+}
+
+.list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 /* End Post Related CSS*/

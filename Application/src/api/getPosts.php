@@ -46,14 +46,14 @@ FROM buboard_posts
   JOIN buboard_profiles ON buboard_posts.post_by_user_id = buboard_profiles.profile_id
   JOIN post_categories ON buboard_posts.belongs_to_category = post_categories.category_id
   LEFT JOIN post_attachments ON buboard_posts.post_id = post_attachments.belongs_to_post_id
-  LEFT JOIN (SELECT * FROM profile_follows WHERE follower_id = '4') t1 ON post_by_user_id=followee_id
+  LEFT JOIN (SELECT * FROM profile_follows WHERE follower_id = '$userID') t1 ON post_by_user_id=followee_id
   ";
 
 if ($latestPostCurView != -1) {
     $query .= " WHERE post_id < $latestPostCurView";
 }
 
-$query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 5";
+$query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 10";
 
 /*End build query*/
 

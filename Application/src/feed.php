@@ -52,19 +52,20 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
     <!-- Creates the main content of the page -->
     <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
-            <div v-for="post in postsObj" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
-                <div class="postTitleCard mdl-card__title mdl-color--blue">
-                    <img class="thumbtack" src="static/image/thumbtack.png">
-                    <h2 class="mdl-card__title-text">
-                        {{post.post_title}}
-                    </h2>
-                </div>
-                <div class="mdl-card__supporting-text">
-                    <div class="card-category-chip chip" v-bind:style="{float: 'right', backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
-                        {{post.category_name}}
+            <transition-group name="list" id="main" tag="span">
+                <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
+                    <div class="postTitleCard mdl-card__title mdl-color--blue">
+                        <img class="thumbtack" src="static/image/thumbtack.png">
+                        <h2 class="mdl-card__title-text">
+                            {{post.post_title}}
+                        </h2>
                     </div>
-                    <ul class="post-authorship mdl-list">
-                        <li class="mdl-list__item mdl-list__item--two-line">
+                    <div class="mdl-card__supporting-text">
+                        <div class="card-category-chip chip" v-bind:style="{float: 'right', backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
+                            {{post.category_name}}
+                        </div>
+                        <ul class="post-authorship mdl-list">
+                            <li class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
                                 <div style="cursor: pointer" v-on:click="window.location='profile.php?id=' + post.profile_id">
                                     <i v-if="post.has_submitted_photo == 0" class="material-icons mdl-list__item-avatar">person</i>
@@ -78,37 +79,50 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                                 </div>
                                 <span class="mdl-list__item-sub-title">{{post.post_date}}</span>
                             </span>
-                        </li>
-                        <hr>
-                    </ul>
-                    <div class="post-contents">
-                        {{post.post_contents}}
-                    </div>
-                    <div v-if="Object.keys(post.attachment_id).length > 0" class="post-image-attachments">
-                        <br>
-                        Attachments:
-                        <div>
-                            <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
-                                        class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
+                            </li>
+                            <hr>
+                        </ul>
+                        <div class="post-contents">
+                            {{post.post_contents}}
+                        </div>
+                        <div v-if="Object.keys(post.attachment_id).length > 0" class="post-image-attachments">
+                            <br>
+                            Attachments:
+                            <div>
+                                <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
+                                            class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
+                            </div>
                         </div>
                     </div>
+                    <div class="mdl-card__menu postOptionsMenu">
+                        <button :id=" post.post_id + 'cornermenu'"
+                                class="mdl-button mdl-js-button mdl-button--icon">
+                            <i class="material-icons">more_vert</i>
+                        </button>
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                            :for=" post.post_id + 'cornermenu'">
+                            <li class="mdl-menu__item">Delete Post</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="mdl-card__menu postOptionsMenu">
-                    <button :id=" post.post_id + 'cornermenu'"
-                            class="mdl-button mdl-js-button mdl-button--icon">
-                        <i class="material-icons">more_vert</i>
-                    </button>
-                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                        :for=" post.post_id + 'cornermenu'">
-                        <li class="mdl-menu__item">Follow User</li>
-                        <li class="mdl-menu__item">Delete Post</li>
-                    </ul>
+            </transition-group>
+            <!-- Loading card. Just a placeholder for mobile scroll -->
+            <div v-if="!isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell--hide-desktop mdl-shadow--8dp mdl-cell mdl-cell--4-col">
+                <div class="postTitleCard mdl-card__title mdl-color--blue">
+                    <img class="thumbtack" src="static/image/thumbtack.png">
+                    <h2 class="mdl-card__title-text">
+                        loading...
+                    </h2>
                 </div>
+                <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
             </div>
         </div>
     </main>
 </div>
-
+<div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
 </body>
 <script src="static/js/material.min.js"></script>
 <script src="static/js/vue.min.js"></script>
@@ -120,33 +134,54 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
         window.location.replace('/');
     }
 
+    function snack(message, length) {
+        var data = {
+            message: message,
+            timeout: length
+        };
+        document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
+    }
+
     var allPostsVue = new Vue({
         el: '#postsView',
         data: {
             postsObj: [],
-            curViewIsCategory: 0,
+            curViewIsCategory: 0, //see curView
             curView: 0, //0 for latest/firehose, 1 for followers view. Otherwise, if is category, it is category index
             latestPostCurView: -1, // for pagination, ID of the last post in received dataset.
-            isAtViewPaginationEnd: 0
+            isAtViewPaginationEnd: false, //end of dataset, make no more requests until view change
+            scrollLock: false //mutex on scroll event handler
         },
         mounted: function () {
+            var self = this;
             this.getPosts();
+            //scroll event handler - 300 px from bottom, pulls new posts
+            $('#postsContentPanel').on('scroll', function() {
+                //self is the vue object, this is the postsContentPanel jquery object
+                if(!(self.scrollLock || self.isAtViewPaginationEnd)) {
+                    if (this.scrollTop >= (this.scrollHeight - this.offsetHeight) - 300) {
+                        self.getPosts();
+                    }
+                }
+            });
         },
         updated: function () {
             componentHandler.upgradeDom();
         },
         methods: {
+            /*Clear all state and request new one with new filter flags*/
             changeView: function (viewID, isCategory) {
                 if (this.curViewIsCategory !== isCategory || this.curView !== viewID) {
-                    this.latestPostCurView = 0;
-                    this.isAtViewPaginationEnd = 0;
-                    this.curViewIsCategory = isCategory;
                     this.curView = viewID;
+                    this.curViewIsCategory = isCategory;
+                    this.latestPostCurView = 0;
+                    this.isAtViewPaginationEnd = false;
                     this.postsObj = [];
                     this.getPosts();
                 }
             },
             getPosts: function () {
+                this.scrollLock = true;
                 if (!this.isAtViewPaginationEnd) {
                     self = this;
                     $.getJSON('api/getPosts.php', {
@@ -155,6 +190,10 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                             latestPostCurView: (this.latestPostCurView === Infinity ? -1 : this.latestPostCurView)
                         },
                         function (data) {
+                            //if number returned is less than API default of 10, then all data is received. Don't re-update
+                            if (data.length < 10) {
+                                self.isAtViewPaginationEnd = true;
+                            }
                             self.postsObj = self.postsObj.concat(data);
                             var smallestID = Infinity;
                             for (var i = 0; i < self.postsObj.length; i++) {
@@ -162,12 +201,21 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                                     smallestID = parseInt(self.postsObj[i]['post_id']);
                                 }
                             }
+                            //if this number doesn't update, good indication that we're at the end of the data
+                            if (self.latestPostCurView === smallestID) {
+                                self.isAtViewPaginationEnd = true;
+                            }
                             self.latestPostCurView = smallestID;
-                        });
+                            //release scroll mutex
+                            self.scrollLock = false;
+                        }).fail(function(){
+                            self.scrollLock = false;
+                            snack("Server Unavailable", 1200);
+                    });
                 }
             },
             invertColor: function (hex, bw) {
-                // stolen from https://github.com/onury/invert-color MIT Licensed.
+                // stolen from https://github.com/onury/invert-color MIT Licensed. -MC
                 if (hex.indexOf('#') === 0) {
                     hex = hex.slice(1);
                 }
@@ -201,6 +249,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
             }
         }
     });
+
 
 </script>
 </html>

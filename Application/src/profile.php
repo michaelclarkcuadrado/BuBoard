@@ -23,7 +23,7 @@ $profile_data = mysqli_fetch_assoc($data)
     <link rel="stylesheet" href="static/css/profile.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="mdl-color--blue-50" style="height:1500px">
+<body class="mdl-color--blue-50" style="height:1500px" onload="checkUser()">
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
@@ -113,7 +113,7 @@ $profile_data = mysqli_fetch_assoc($data)
 			modal.style.display = "none";
 		}
 	};
-
+/*
 	window.onscroll = function(){myFunction()};
 	function myFunction() {
 
@@ -125,6 +125,7 @@ $profile_data = mysqli_fetch_assoc($data)
 			document.getElementById("followBtn2").style.visibility = "hidden";
 		}
 	};
+
     document.getElementById("editN").onclick = function(event){
       //alert("click");
       document.getElementById("pName").contentEditable = true;
@@ -137,7 +138,7 @@ $profile_data = mysqli_fetch_assoc($data)
 
     };
 
-/*  document.getElementById("edit").onclick = function(){
+  document.getElementById("edit").onclick = function(){
     var y = x.getElementsByClassName("material-icons");
     if(y[0].style.visibility === 'visible'){
       y[1].style.visibility = "visible";
@@ -155,6 +156,37 @@ $profile_data = mysqli_fetch_assoc($data)
         window.location.replace('/');
     };
 
+    function checkUser() {
+      if(isOwnProfile === true) {
+        btn.style.display = "none";
+        btn2.style.display = "none";
+        document.getElementById("editN").onclick = function(event){
+          //alert("click");
+          document.getElementById("pName").contentEditable = true;
+          document.getElementById("editN").style.display = "none";
+          document.getElementById("editD").style.visibility = "visible";
+          document.getElementById("editD").onclick = function(){
+            console.log(document.getElementById("pName").innerHTML);
+            var newName = document.getElementById("pName".innerHTML);
+            alert("saved");
+
+        };
+      }
+    }//end if
+    else {
+      window.onscroll = function(){myFunction()};
+    	function myFunction() {
+
+    		if (document.body.scrollTop > 150 ||document.documentElement.scrollTop > 150){
+    			document.getElementById("followBtn2").style.visibility = "visible";
+
+    		}
+    		else {
+    			document.getElementById("followBtn2").style.visibility = "hidden";
+    		}
+    	};
+    }
+    }
 
 </script>
 </body>

@@ -2,7 +2,7 @@
 require_once 'config.php';
 $userinfo = buboard_authenticate($mysqli, $authenticationKey);
 
-$categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM post_categories");
+$categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, category_color FROM post_categories");
 ?>
 
 <!doctype html>
@@ -52,7 +52,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
     <!-- Creates the main content of the page -->
     <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
-            <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
+            <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
                 <div class="postTitleCard mdl-card__title mdl-color--blue">
                     <img class="thumbtack" src="static/image/thumbtack.png">
                     <h2 class="mdl-card__title-text">
@@ -60,7 +60,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                     </h2>
                 </div>
                 <div class="mdl-card__supporting-text">
-                    This view doesn't have any cards.
+                    This view doesn't have any posts. Tell your friends about buboard, or follow more people.
                 </div>
             </div>
             <transition-group name="list" id="main" mode="out-in" tag="span">
@@ -82,8 +82,8 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                                     <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer" class="material-icons mdl-list__item-avatar">person</i>
                                     <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer" class="mdl-list__item-avatar">
                                     <span v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer">{{post.real_name}}</span>
-                                    <i :id="post.post_id + '-following'" v-on:click="subscribe(post.profile_id)" v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">rss_feed</i>
-                                    <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
+                                    <i v-if="post.isOwnPost == 0" :id="post.post_id + '-following'" v-on:click="manageSubscription(post.profile_id, post.isSubscribed)" v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">rss_feed</i>
+                                    <div v-if="post.isOwnPost == 0" class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
                                         <span v-if="post.isSubscribed > 0">Unsubscribe</span>
                                         <span v-else>Subscribe</span>
                                     </div>
@@ -105,7 +105,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                             </div>
                         </div>
                     </div>
-                    <div class="mdl-card__menu postOptionsMenu">
+                    <div v-if="post.isOwnPost > 0" class="mdl-card__menu postOptionsMenu">
                         <button :id=" post.post_id + 'cornermenu'"
                                 class="mdl-button mdl-js-button mdl-button--icon">
                             <i class="material-icons">more_vert</i>
@@ -161,7 +161,16 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
             curView: 0, //0 for latest/firehose, 1 for followers view. Otherwise, if is category, it is category index
             latestPostCurView: -1, // for pagination, ID of the last post in received dataset.
             isAtViewPaginationEnd: false, //end of dataset, make no more requests until view change
-            scrollLock: false //mutex on scroll event handler
+            scrollLock: false, //mutex on scroll event handler
+            categories: <?php
+                //sorry for the injection from php, but here's categories
+            mysqli_data_seek($categoriesQuery, 0);
+            $output = array();
+            while($category = mysqli_fetch_assoc($categoriesQuery)){
+                array_push($output, $category);
+            }
+            echo json_encode($output);
+            ?>
         },
         mounted: function () {
             var self = this;
@@ -186,7 +195,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                 if (this.curViewIsCategory !== isCategory || this.curView !== viewID) {
                     this.curView = viewID;
                     this.curViewIsCategory = isCategory;
-                    this.latestPostCurView = -1;
+                    this.latestPostCurView = Infinity;
                     this.isAtViewPaginationEnd = false;
                     this.postsObj = [];
                     this.getPosts();
@@ -226,14 +235,28 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name FROM
                     });
                 }
             },
-            subscribe: function(subscribeToID){
+            manageSubscription: function(subscribeToID, isSubscribed){
                 var self = this;
-                $.get('api/subscribe.php', {subscribeToID: subscribeToID}, function(){
+                var argsObj = {subscribeToID: subscribeToID};
+                var successMessage = "Subscribed!";
+                if(isSubscribed > 0){
+                    argsObj.action = "unsubscribe";
+                    successMessage = "Unsubscribed!";
+                }
+                $.get('api/subscribe.php', argsObj, function(){
                     for(var i = 0; i < self.postsObj.length; i++){
-                        if(parseInt(self.postsObj[i]['profile_id']) == subscribeToID){
-                            self.postsObj[i]['isSubscribed'] = 1;
+                        if(self.postsObj[i]['profile_id'] == subscribeToID){
+                            console.log("yeeeee");
+                            if(parseInt(self.postsObj[i]['isSubscribed']) > 0){
+                                self.postsObj[i]['isSubscribed'] = 0;
+                            } else {
+                                self.postsObj[i]['isSubscribed'] = 1;
+                            }
                         }
                     }
+                    snack(successMessage);
+                }).fail(function(){
+                    snack("Could not edit subscription.", 1000);
                 });
             },
             invertColor: function (hex, bw) {

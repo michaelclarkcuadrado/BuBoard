@@ -27,7 +27,8 @@ if(isset($_GET['latestPostCurView'])) {
 }
 
 /*Build query based on params*/
-$query = "SELECT
+$query = /** @lang MySQL */
+    "SELECT
   post_id,
   profile_id,
   belongs_to_category,
@@ -40,7 +41,8 @@ $query = "SELECT
   category_name,
   category_color,
   GROUP_CONCAT(DISTINCT attachment_id SEPARATOR ',') as attachment_id,
-  IF(ISNULL(followee_id), FALSE, TRUE) as isSubscribed
+  IF(ISNULL(followee_id), FALSE, TRUE) as isSubscribed,
+  IF(profile_id = $userID, TRUE, FALSE) as isOwnPost
 FROM buboard_posts
   JOIN buboard_profiles ON buboard_posts.post_by_user_id = buboard_profiles.profile_id
   JOIN post_categories ON buboard_posts.belongs_to_category = post_categories.category_id
@@ -52,7 +54,7 @@ FROM buboard_posts
 $hasWhereStatement = false;
 if ($curViewIsCategory == 0 && $curView == 1){
     //'following' feed
-    $query .= " WHERE IF(IFNULL(followee_id, TRUE), FALSE , TRUE ) TRUE";
+    $query .= " WHERE IF(ISNULL(followee_id), FALSE, TRUE) = TRUE";
     $hasWhereStatement = true;
 } elseif ($curViewIsCategory) {
     //category view

@@ -40,3 +40,14 @@ function buboard_authenticate($mysqli, $authenticationKey) {
         return mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM buboard_profiles WHERE email_address = '$SecuredUserName'"));
     }
 }
+
+
+/**
+ * Kills a connection and gives an error message
+ * @param $errorMsg - string, failure reason given
+ */
+function APIFail($errorMsg = 'Internal Server Error'){
+    header($_SERVER['SERVER_PROTOCOL'] . '500 ' . $errorMsg, true, 500);
+    error_log($errorMsg);
+    die();
+}

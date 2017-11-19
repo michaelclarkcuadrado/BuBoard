@@ -1,6 +1,8 @@
 # BuBoard
 A skeumorphic bulletin board application for announcing and following local events and announcements. Account subscriptions, sorting, and attachments all supported. A hyper-local twitter clone.
 
+![Buboard's desktop view](buboard.png)
+
 A senior project by CS students at Gettysburg College.
 
 Copyleft Michael Clark-Cuadrado, Jingyi 'Jannie' Liu, and Zachary Miller.

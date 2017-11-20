@@ -15,7 +15,7 @@ The file `docker-compose.yml` takes configuration of things like the current pub
 ### Default Passwords
 Database / phpmyadmin passwords: root:buboard
 
-Buboard default administrator account: buboardadmin:buboardadmin
+Buboard default administrator account: buboardadmin@buboard.com:buboardadmin
 
 ### Database Browsing
 A PhpMyAdmin server is available locally on port 8080. Recommended to disabled in docker-compose.yml before deployment.

@@ -6,7 +6,9 @@ $messagePresent = false;
 $message = null;
 
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    buboard_login($mysqli, $authenticationKey);
+    $returnVal = buboard_login($mysqli, $authenticationKey);
+    $messagePresent = $returnVal['messagePresent'];
+    $message = $returnVal['message'];
 }
 
 if (isset($_GET['message'])) {
@@ -41,7 +43,7 @@ if (isset($_GET['message'])) {
             <label class="mdl-textfield__label" for="password">Password</label>
         </div>
 
-        <button style="width:100%" onclick="window.location = 'feed.php'"
+        <button style="width:100%"
                 class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
             Sign In
         </button>

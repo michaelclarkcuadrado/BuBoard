@@ -18,15 +18,23 @@ if (mysqli_connect_errno()) {
 function buboard_login($mysqli, $authenticationKey) {
     //check for login request
     $username = mysqli_real_escape_string($mysqli, $_POST['username']);
-    $hash = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT password_hash FROM buboard_profiles WHERE email_address = '$username'"))['password_hash'];
-    if (password_verify($_POST['password'], $hash)) {
-        //ding ding ding!
-        setcookie('username', $username);
-        setcookie('token', crypt($username, $authenticationKey));
-        die("<script>window.location = '/feed.php'</script>");
+    $profile_auth = mysqli_query($mysqli, "SELECT password_hash, email_is_confirmed, email_address FROM buboard_profiles WHERE email_address = '$username'");
+    if(mysqli_num_rows($profile_auth) == 0){
+        //no such username
+        return array('messagePresent' => true, 'message' => "Incorrect password or username, try again.");
+    }
+    $profile_auth = mysqli_fetch_assoc($profile_auth);
+    if($profile_auth['email_is_confirmed'] > 0) {
+        if (password_verify($_POST['password'], $profile_auth['password_hash'])) {
+            //ding ding ding!
+            setcookie('username', $username);
+            setcookie('token', crypt($username, $authenticationKey));
+            die("<script>window.location = '/feed.php'</script>");
+        } else {
+            return array('messagePresent' => true, 'message' => "Incorrect password or username, try again.");
+        }
     } else {
-        $messagePresent = true;
-        $message = "Incorrect password or username. Try again.";
+        return array('messagePresent' => true, 'message' => "You need to confirm your email at " . $profile_auth['email_address'] . " before you can log in.");
     }
 }
 

@@ -34,7 +34,7 @@ $query = /** @lang MySQL */
   belongs_to_category,
   post_contents,
   post_title,
-  post_date,
+  UNIX_TIMESTAMP(post_date) AS seconds_since,
   real_name,
   has_submitted_photo,
   category_id,

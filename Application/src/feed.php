@@ -20,21 +20,14 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     <header class="mdl-layout__header">
         <!--Top row of header-->
         <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">Local Feed</span>
+            <span class="mdl-layout-title">My BuBoard</span>
             <div class="mdl-layout-spacer"></div>
-            <a class="mdl-navigation__link" id="help_btn" href="help.php">
-                <i class="material-icons">help</i>
-            </a>
-        </div>
-
-        <div class="mdl-layout__header-row" id="desktopCategoriesSwitcher">
-            <div class="mdl-layout-spacer"></div>
-            <nav class="mdl-navigation">
-                <a class="mdl-navigation__link is-active" style="cursor: pointer" onclick="allPostsVue.changeView(0, 0)">Latest</a>
+            <nav class="mdl-navigation" id="desktopCategoriesSwitcher">
+                <a class="mdl-navigation__link is-active-feed-view" style="cursor: pointer" onclick="allPostsVue.changeView(0, 0)">Latest</a>
                 <a class="mdl-navigation__link" style="cursor: pointer" onclick="allPostsVue.changeView(1, 0)">Following</a>
                 <?php
                 while ($category = mysqli_fetch_assoc($categoriesQuery)) {
-                    echo "<a class=\"mdl-navigation__link\" style=\"cursor: pointer\">" . $category['category_name'] . "</a>";
+                    echo "<a class=\"mdl-navigation__link\" style=\"cursor: pointer\" onclick='allPostsVue.changeView(" . $category['category_id'] . " , 1)'>" . $category['category_name'] . "</a>";
                 }
                 ?>
             </nav>
@@ -52,15 +45,16 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     <!-- Creates the main content of the page -->
     <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
-            <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
+            <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial"
+                 class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
                 <div class="postTitleCard mdl-card__title mdl-color--blue">
                     <img class="thumbtack" src="static/image/thumbtack.png">
                     <h2 class="mdl-card__title-text">
-                        Buboard Notice
+                        Whoa There!
                     </h2>
                 </div>
                 <div class="mdl-card__supporting-text">
-                    This view doesn't have any posts. Tell your friends about buboard, or follow more people.
+                    This view doesn't have any posts. Tell your friends about BuBoard, or follow more people.
                 </div>
             </div>
             <transition-group name="list" id="main" mode="out-in" tag="span">
@@ -79,16 +73,13 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                             <li class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
                                 <div>
-                                    <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer" class="material-icons mdl-list__item-avatar">person</i>
-                                    <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer" class="mdl-list__item-avatar">
+                                    <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
+                                       class="material-icons mdl-list__item-avatar">person</i>
+                                    <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
+                                         style="cursor: pointer" class="mdl-list__item-avatar">
                                     <span v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer">{{post.real_name}}</span>
-                                    <i v-if="post.isOwnPost == 0" :id="post.post_id + '-following'" v-on:click="manageSubscription(post.profile_id, post.isSubscribed)" v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">rss_feed</i>
-                                    <div v-if="post.isOwnPost == 0" class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
-                                        <span v-if="post.isSubscribed > 0">Unsubscribe</span>
-                                        <span v-else>Subscribe</span>
-                                    </div>
                                 </div>
-                                <span class="mdl-list__item-sub-title">{{post.post_date}}</span>
+                                <span class="mdl-list__item-sub-title">{{formatSeconds(post.seconds_since)}}</span>
                             </span>
                             </li>
                             <hr>
@@ -105,6 +96,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                             </div>
                         </div>
                     </div>
+                    <!--own profile menu-->
                     <div v-if="post.isOwnPost > 0" class="mdl-card__menu postOptionsMenu">
                         <button :id=" post.post_id + 'cornermenu'"
                                 class="mdl-button mdl-js-button mdl-button--icon">
@@ -112,9 +104,19 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                         </button>
                         <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                             :for=" post.post_id + 'cornermenu'">
-                            <li class="mdl-menu__item">Delete Post</li>
+                            <li class="mdl-menu__item" v-on:click="deletePost(post.post_id)">Delete Post</li>
                         </ul>
                     </div>
+                    <!--Follow button-->
+                    <div v-else  class="mdl-card__menu postOptionsMenu">
+                        <i style="color: white; cursor: pointer" :id="post.post_id + '-following'" v-on:click="manageSubscription(post.profile_id, post.isSubscribed)"
+                           v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">person_add</i>
+                        <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
+                            <span v-if="post.isSubscribed > 0">Unsubscribe</span>
+                            <span v-else>Subscribe</span>
+                        </div>
+                    </div>
+
                 </div>
             </transition-group>
             <!-- Loading card. Just a placeholder for mobile scroll -->
@@ -158,15 +160,14 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
         data: {
             postsObj: [],
             curViewIsCategory: 0, //see curView
-            curView: 0, //0 for latest/firehose, 1 for followers view. Otherwise, if is category, it is category index
+            curView: 0, //0 for latest/firehose, 1 for followers view. Otherwise, if curViewIsCategory, it is category index
             latestPostCurView: -1, // for pagination, ID of the last post in received dataset.
             isAtViewPaginationEnd: false, //end of dataset, make no more requests until view change
             scrollLock: false, //mutex on scroll event handler
             categories: <?php
-                //sorry for the injection from php, but here's categories
             mysqli_data_seek($categoriesQuery, 0);
             $output = array();
-            while($category = mysqli_fetch_assoc($categoriesQuery)){
+            while ($category = mysqli_fetch_assoc($categoriesQuery)) {
                 array_push($output, $category);
             }
             echo json_encode($output);
@@ -235,29 +236,79 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     });
                 }
             },
-            manageSubscription: function(subscribeToID, isSubscribed){
+            manageSubscription: function (subscribeToID, isSubscribed) {
                 var self = this;
                 var argsObj = {subscribeToID: subscribeToID};
                 var successMessage = "Subscribed!";
-                if(isSubscribed > 0){
+                if (isSubscribed > 0) {
                     argsObj.action = "unsubscribe";
                     successMessage = "Unsubscribed!";
                 }
-                $.get('api/subscribe.php', argsObj, function(){
-                    for(var i = 0; i < self.postsObj.length; i++){
-                        if(self.postsObj[i]['profile_id'] == subscribeToID){
-                            console.log("yeeeee");
-                            if(parseInt(self.postsObj[i]['isSubscribed']) > 0){
-                                self.postsObj[i]['isSubscribed'] = 0;
-                            } else {
-                                self.postsObj[i]['isSubscribed'] = 1;
+                $.get('api/subscribe.php', argsObj, function () {
+                    //ux - if in "following" view and you're unsubscribing, just remove posts from postsObj
+                    if (self.curViewIsCategory == 0 && self.curView == 1 && argsObj['action'] == 'unsubscribe') {
+                        self.postsObj = self.postsObj.filter(function (post) {
+                            return (post['profile_id'] !== subscribeToID);
+                        });
+                    } else { // else loop through postsObj to flip the subscription status of all posts under that account.
+                        for (var i = 0; i < self.postsObj.length; i++) {
+                            if (self.postsObj[i]['profile_id'] == subscribeToID) {
+                                if (parseInt(self.postsObj[i]['isSubscribed']) > 0) {
+                                    self.postsObj[i]['isSubscribed'] = 0;
+                                } else {
+                                    self.postsObj[i]['isSubscribed'] = 1;
+                                }
                             }
                         }
                     }
                     snack(successMessage);
-                }).fail(function(){
+                }).fail(function () {
                     snack("Could not edit subscription.", 1000);
                 });
+            },
+            deletePost: function(post_id){
+              var self = this;
+              $.get('api/deletePost.php', {post_id: post_id}, function(){
+                  for(var i = 0; i < self.postsObj.length; i++){
+                    if(self.postsObj[i]['post_id'] == post_id){
+                        self.postsObj.splice(i, 1);
+                        break;
+                    }
+                  }
+              }).fail(function() {
+                  snack('Could not delete post.', 1500);
+              });
+            },
+            formatSeconds: function (inSeconds) {
+                function numberEnding(number) {
+                    return (number > 1) ? 's' : '';
+                }
+
+                var curTimestamp = Math.round((new Date()).getTime() / 1000);
+                var temp = Math.floor(inSeconds);
+                temp = curTimestamp - temp;
+
+                var years = Math.floor(temp / 31536000);
+                if (years) {
+                    return years + ' year' + numberEnding(years) + ' ago';
+                }
+                var days = Math.floor((temp %= 31536000) / 86400);
+                if (days) {
+                    return days + ' day' + numberEnding(days) + ' ago';
+                }
+                var hours = Math.floor((temp %= 86400) / 3600);
+                if (hours) {
+                    return hours + ' hour' + numberEnding(hours) + ' ago';
+                }
+                var minutes = Math.floor((temp %= 3600) / 60);
+                if (minutes) {
+                    return minutes + ' minute' + numberEnding(minutes) + ' ago';
+                }
+                var seconds = temp % 60;
+                if (seconds) {
+                    return seconds + ' second' + numberEnding(seconds) + ' ago';
+                }
+                return 'Just Now';
             },
             invertColor: function (hex, bw) {
                 // stolen from https://github.com/onury/invert-color MIT Licensed. -MC

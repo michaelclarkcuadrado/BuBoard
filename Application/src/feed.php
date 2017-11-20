@@ -24,7 +24,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             <div class="mdl-layout-spacer"></div>
             <nav class="mdl-navigation" id="desktopCategoriesSwitcher">
                 <a class="mdl-navigation__link is-active-feed-view" style="cursor: pointer" onclick="allPostsVue.changeView(0, 0)">Latest</a>
-                <a class="mdl-navigation__link" style="cursor: pointer" onclick="allPostsVue.changeView(1, 0)">Following</a>
+                <a class="mdl-navigation__link" style="cursor: pointer" onclick="allPostsVue.changeView(1, 0)">Subscriptions</a>
                 <?php
                 while ($category = mysqli_fetch_assoc($categoriesQuery)) {
                     echo "<a class=\"mdl-navigation__link\" style=\"cursor: pointer\" onclick='allPostsVue.changeView(" . $category['category_id'] . " , 1)'>" . $category['category_name'] . "</a>";

@@ -61,6 +61,7 @@
 .post-authorship {
     margin: 0;
     padding: 0;
+    flex-grow: 1;
 }
 
 .post-authorship > li {
@@ -70,17 +71,24 @@
     padding-left: 0px;
 }
 
+.post-name-display {
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+}
+
 #help_btn {
     padding: 0;
 }
 
 .chip {
-    display: initial;
     vertical-align: text-top;
     font-size: 14px;
     padding: 5px;
-    margin-right: 15px;
-    border-radius: 15px;
+    /*border-radius: 15px;*/
+    height: fit-content;
 }
 
 .subscribe-btn {

@@ -91,6 +91,12 @@
     height: fit-content;
 }
 
+.verified_user {
+    font-size: medium;
+    color: blue;
+    margin-right: 2px;
+}
+
 .subscribe-btn {
     color: black;
     vertical-align: text-top;

@@ -9,9 +9,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" type="text/css" href="static/css/signup.css"/>
+    <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
 </head>
 
 
@@ -118,14 +117,11 @@
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="major">  Major</label>
-                        <input class="mdl-textfield__input" id="major" name="major"/>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">  A brief description of yourself</label>
+                        <textarea class="mdl-textfield__input " type="text" rows="3" id="description" name="description"></textarea>
+
                     </div>
                 </div>
-                <div class="mdl-layout-spacer"></div>
-
-
-                <div class="mdl-layout-spacer"></div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">  Password</label>
@@ -142,15 +138,8 @@
 
 
                 <div class="mdl-layout-spacer"></div>
-                <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">  A brief description of yourself</label>
-                        <textarea class="mdl-textfield__input " type="text" rows="3" id="description" name="description"></textarea>
-
-                    </div>
-                </div>
-                <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
-                    <label class="mdl-color-text--blue-grey-600"> Upload a Profile Picture</label>
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col">
+                    <label class="mdl-color-text--blue-grey-600"> Upload a Profile Picture</label><br>
                     <input class="mdl-button" type="file" name="fileToUpload" id="fileToUpload"/>
                 </div>
 

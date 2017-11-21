@@ -23,6 +23,7 @@ if (isset($_GET['message'])) {
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/login.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2196f3">
 </head>
 
 <body style="overflow:hidden">

@@ -40,6 +40,7 @@ $query = /** @lang MySQL */
   category_id,
   category_name,
   category_color,
+  isVerifiedAccount,
   GROUP_CONCAT(DISTINCT attachment_id SEPARATOR ',') as attachment_id,
   IF(ISNULL(followee_id), FALSE, TRUE) as isSubscribed,
   IF(profile_id = $userID, TRUE, FALSE) as isOwnPost

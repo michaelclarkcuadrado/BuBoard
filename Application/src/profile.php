@@ -21,6 +21,7 @@ $profile_data = mysqli_fetch_assoc($data)
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/profile.css"/>
+    <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body class="mdl-color--blue-50" style="height:1500px" onload="checkUser()">

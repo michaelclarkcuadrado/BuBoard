@@ -12,6 +12,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/feed.css"/>
+    <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -74,7 +75,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                                    class="material-icons mdl-list__item-avatar">person</i>
                                 <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
-                                <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display">{{post.real_name}}</span>
+                                <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display"><i v-if="post.isVerifiedAccount > 0" class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
                                 <span class="mdl-list__item-sub-title">{{formatSeconds(post.seconds_since)}}</span>
                             </span>
                                 </li>

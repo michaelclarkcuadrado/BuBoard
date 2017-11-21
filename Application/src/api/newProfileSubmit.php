@@ -52,13 +52,17 @@ if ($password1 != $password2){
 }
 
 
+
+if($password1 === $password2){
+    $hash = password_hash($password1, PASSWORD_DEFAULT);
+} else {
+    $check = false;
+}
+
 if (!$check){
     header("location: ../signup.php");
 }
 
-if($password1 === $password2){
-    $hash = password_hash($password1, PASSWORD_DEFAULT);
-} else die();
 
 $posts_queryresult = mysqli_query($mysqli, "
       INSERT INTO `buboard_profiles` (`real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `profile_desc`, `has_submitted_photo`)
@@ -66,6 +70,14 @@ $posts_queryresult = mysqli_query($mysqli, "
     ");
 
 $profile_id = mysqli_insert_id($mysqli);
+
+//auto-follow all verified accounts
+$list_verified_accts = mysqli_query($mysqli, "SELECT profile_id FROM buboard_profiles WHERE isVerifiedAccount > 0");
+$stmt = mysqli_prepare($mysqli, "INSERT INTO profile_follows (follower_id, followee_id) VALUES (?, ?)");
+while($verified_acct = mysqli_fetch_assoc($list_verified_accts)){
+    mysqli_stmt_bind_param($stmt, 'ii', $profile_id, $verified_acct['profile_id']);
+    mysqli_stmt_execute($stmt);
+}
 
 if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
     switch ($_FILES['fileToUpload']["error"]) {
@@ -100,8 +112,6 @@ if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
     }
 }
 
-
-//The massage below should only work for a local machines link, as we dont have an actual web address ye
 $confirmLink = "http://" . getenv('HOSTNAME') . "/api/emailConfirm.php?email=$email&confirmcode=$confirmcode";
 $message =
     "   

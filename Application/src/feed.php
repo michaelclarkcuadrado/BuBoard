@@ -65,25 +65,25 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                             {{post.post_title}}
                         </h2>
                     </div>
-                    <div style="width: unset" class="mdl-card__supporting-text">
-                        <div style="display: flex">
-                            <ul class="post-authorship mdl-list">
-                                <li class="mdl-list__item mdl-list__item--two-line">
+                    <div class="mdl-card__supporting-text">
+                        <div class="card-category-chip chip" v-bind:style="{float: 'right', backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
+                            {{post.category_name}}
+                        </div>
+                        <ul class="post-authorship mdl-list">
+                            <li class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
-                                <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
-                                   class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
-                                     style="cursor: pointer" class="mdl-list__item-avatar">
-                                <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display">{{post.real_name}}</span>
+                                <div>
+                                    <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
+                                       class="material-icons mdl-list__item-avatar">person</i>
+                                    <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
+                                         style="cursor: pointer" class="mdl-list__item-avatar">
+                                    <span v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer">{{post.real_name}}</span>
+                                </div>
                                 <span class="mdl-list__item-sub-title">{{formatSeconds(post.seconds_since)}}</span>
                             </span>
-                                </li>
-                            </ul>
-                            <div class="card-category-chip chip" v-bind:style="{backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
-                                {{post.category_name}}
-                            </div>
-                        </div>
-                        <hr>
+                            </li>
+                            <hr>
+                        </ul>
                         <div class="post-contents">
                             {{post.post_contents}}
                         </div>
@@ -108,7 +108,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                         </ul>
                     </div>
                     <!--Follow button-->
-                    <div v-else class="mdl-card__menu postOptionsMenu">
+                    <div v-else  class="mdl-card__menu postOptionsMenu">
                         <i style="color: white; cursor: pointer" :id="post.post_id + '-following'" v-on:click="manageSubscription(post.profile_id, post.isSubscribed)"
                            v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">person_add</i>
                         <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
@@ -266,18 +266,18 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     snack("Could not edit subscription.", 1000);
                 });
             },
-            deletePost: function (post_id) {
-                var self = this;
-                $.get('api/deletePost.php', {post_id: post_id}, function () {
-                    for (var i = 0; i < self.postsObj.length; i++) {
-                        if (self.postsObj[i]['post_id'] == post_id) {
-                            self.postsObj.splice(i, 1);
-                            break;
-                        }
+            deletePost: function(post_id){
+              var self = this;
+              $.get('api/deletePost.php', {post_id: post_id}, function(){
+                  for(var i = 0; i < self.postsObj.length; i++){
+                    if(self.postsObj[i]['post_id'] == post_id){
+                        self.postsObj.splice(i, 1);
+                        break;
                     }
-                }).fail(function () {
-                    snack('Could not delete post.', 1500);
-                });
+                  }
+              }).fail(function() {
+                  snack('Could not delete post.', 1500);
+              });
             },
             formatSeconds: function (inSeconds) {
                 function numberEnding(number) {

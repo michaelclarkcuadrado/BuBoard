@@ -55,7 +55,7 @@ if (isset($_GET['message'])) {
             Sign Up
         </button>
         <br>
-        <a class="mdl-color-text--primary" style="text-align: right; font-size: small">Forgot Password</a>
+        <a class="mdl-color-text--primary" href="forgotPassword.php" style="text-align: right; font-size: small">Forgot Password</a>
 
     </div>
 </div>
@@ -70,6 +70,5 @@ if (isset($_GET['message'])) {
             $('#sliding_login_card').slideDown();
         }, <?=($messagePresent ? 0 : 1200)?>);
     });
-
 </script>
 </html>

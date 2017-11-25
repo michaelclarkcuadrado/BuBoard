@@ -1,7 +1,13 @@
 <?php
 //Sign Up Screen - BuBoard
 
+$messagePresent = false;
+$message = null;
 
+if (isset($_GET['message'])) {
+    $messagePresent = true;
+    $message = $_GET['message'];
+}
 ?>
 <html>
 <head>
@@ -81,7 +87,7 @@
 
 
 <main class="mdl--layout">
-    <form name="mainform" method="post" onsubmit="return validateForm()" action="api/newProfileSubmit.php" enctype="multipart/form-data">
+    <form name="mainform" method="post" action="api/newProfileSubmit.php" enctype="multipart/form-data">
         <div class="mdl-grid mainbody mdl-shadow--8dp">
             <div class="mdl-grid center-items mdl-shadow--8dp mdl-color--grey-100">
 
@@ -92,17 +98,20 @@
                     <h2 class="mdl-color-text--blue-grey-600 title">Welcome to BuBoard!</h2>
                 </div>
 
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col">
+                    <h5 class="mdl-color-text--red-600 title"><?=($messagePresent ? $message : "")?></h5>
+                </div>
+
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="firstname">  First Name</label>
-                        <input class="mdl-textfield__input" id="firstname" name="firstname"/>
-                        <span class="mdl-textfield__error">Must enter a First Name</span>
+                        <input class="mdl-textfield__input" id="firstname" name="firstname" />
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="lastname">  Last Name</label>
-                        <input class="mdl-textfield__input" id="lastname" name="lastname"/>
+                        <input class="mdl-textfield__input" id="lastname" name="lastname" />
                     </div>
                 </div>
                 <div class="mdl-layout-spacer"></div>
@@ -112,26 +121,26 @@
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="email">  College Email</label>
-                        <input class="mdl-textfield__input" id="email" name="email"/>
+                        <input class="mdl-textfield__input" id="email" name="email" />
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="description">  A brief description of yourself</label>
-                        <textarea class="mdl-textfield__input " type="text" rows="3" id="description" name="description"></textarea>
+                        <textarea class="mdl-textfield__input " type="text" rows="3" id="description" name="description" ></textarea>
 
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">  Password</label>
-                        <input class="mdl-textfield__input" id="password1" type="password" name="password1"/>
+                        <input class="mdl-textfield__input" id="password1" type="password" name="password1" />
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
                         <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">  Re-enter Password</label>
-                        <input class="mdl-textfield__input" id="password2" type="password" name="password2"/>
+                        <input class="mdl-textfield__input" id="password2" type="password" name="password2" />
                     </div>
                 </div>
                 <div class="mdl-layout-spacer"></div>
@@ -146,73 +155,18 @@
                 <div class="mdl-layout-spacer"></div>
 
                 <div class="mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-                    <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit" value="uploadImage">
+                    <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" id="submit" type="submit" name="submit" value="uploadImage">
                         Sign Up
                     </button>
                 </div>
             </div>
-        </div>
         </div>
     </form>
 </main>
 
 <script src="static/js/material.min.js"></script>
 
-<script>
 
-    function validateForm() {
-        var firstname = document.getElementById("firstname").value;
-        var lastname = document.getElementById("lastname").value;
-        var email = document.getElementById("email").value;
-        var password1 = document.getElementById("password1").value;
-        var password2 = document.getElementById("password2").value;
-
-
-        if (firstname == "" && lastname == "") {
-            alert("Must supply a first and last name");
-            return false;
-        }
-
-        if (firstname == "") {
-            alert("Must supply an first name");
-            return false;
-        }
-
-        if (lastname == "") {
-            alert("Must supply an last name");
-            return false;
-        }
-
-        if (email == "") {
-            alert("Must supply an email");
-            return false;
-        }
-
-        if (email.indexOf("@") == -1) {
-            alert("Not an email");
-            return false;
-        }
-
-        if (email.indexOf("@gettysburg.edu") == -1) {
-            alert("Not a Gettysburg email");
-            return false;
-        }
-
-        if (password1 == "" || password2 == "") {
-            alert("Must supply a password");
-            return false;
-        }
-
-        if (password1 != password2) {
-            alert("Passwords do not match");
-            return false;
-        }
-
-        return true;
-    }
-
-
-</script>
 
 
 </html>

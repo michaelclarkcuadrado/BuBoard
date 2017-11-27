@@ -51,7 +51,7 @@ else if (!strpos($email, "@gettysburg.edu")){
 
 else if ($password1 == "" || $password2 == ""){
     $check = false;
-    $message = "You must a password";
+    $message = "You must have a password";
 }
 
 else if ($password1 != $password2){
@@ -89,23 +89,27 @@ else {
         mysqli_stmt_execute($stmt);
     }
 
+
+
     if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
         switch ($_FILES['fileToUpload']["error"]) {
             case UPLOAD_ERR_OK:
                 $target = "../usercontent/user_avatars/";
                 $target = $target . basename($_FILES['fileToUpload']['name']);
 
-
                 $uploadOk = 1;
 
-                if (file_exists($target_file)) {
+                if (file_exists('$target_file')) {
                     echo "Sorry, file already exists.";
                     $uploadOk = 0;
                 }
 
-                if (pathinfo($target, PATHINFO_EXTENSION) != "jpg") {
+                $file_parts = pathinfo($target);
+
+                if ($file_parts['extension'] != 'jpg') {
                     $uploadOk = 0;
                 }
+
 
                 if ($uploadOk == 1) {
                     $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
@@ -121,6 +125,7 @@ else {
                 }
         }
     }
+
 
     $confirmLink = "http://" . getenv('HOSTNAME') . "/api/emailConfirm.php?email=$email&confirmcode=$confirmcode";
     $message =
@@ -154,9 +159,13 @@ else {
     } catch (Exception $e) {
         error_log('Message could not be sent.');
     }
+
+
+
 }
 
 ?>
+
 
 <script>window.location = "/index.php?message=Confirmation Email has been sent."</script>
 

@@ -21,31 +21,37 @@ $profile_data = mysqli_fetch_assoc($data)
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/profile.css"/>
+    <link rel="stylesheet" href="static/css/introjs.css"/>
     <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body class="mdl-color--blue-50" style="height:1500px" onload="checkUser()">
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row">
+        <div class="mdl-layout__header-row" >
             <span class="mdl-layout-title">Personal Profile</span>
             <div class="mdl-layout-spacer"></div>
-            <a class="mdl-navigation__link" id="help_btn" href="help.php">
-                <i class="material-icons">help</i>
+            <!--<a class="mdl-navigation__link" id="help_btn" href="help.php">
+              <i class="material-icons">help</i>
                 <div class="mdl-tooltip" data-mdl-for="help_btn">
                     Need Help?
                 </div>
-            </a>
+            </a>-->
+            <span id="help_btn"><i class="material-icons">help</i></span>
+
         </div>
     </header>
+
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">BuBoard</span>
         <nav class="mdl-navigation mdl-color--blue-light_blue-800">
             <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
             <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
             <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
+            <a class="mdl-navigation__link" href="javascript:void(0);"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help</i>Help</a>
         </nav>
-    </div>
+      </div>
+
 
 <!--		<div class="navbar">-->
 <!--			      <a href="feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i></a>-->
@@ -60,15 +66,16 @@ $profile_data = mysqli_fetch_assoc($data)
             <div class="content" id="content">
                 <span id ="edit">
                   <h4 id="pName"><?= $profile_data['real_name'] ?></h4>
-                  <i class="material-icons"id="editN" style="visibility:visible">edit</i>
+                  <i class="material-icons"id="editN" style="visibility:visible" data-step="1" data-intro="click it to change your user name.">edit</i>
                   <i class="material-icons" id="editD" style="visibility:hidden">save</i>
+                  <div id="snackbar">change saved</div>
                   </br>
                   <p><?= $profile_data['email_address'] ?><br>
                   <?= $profile_data['profile_desc'] ?>
-                  <i class="material-icons">edit</i>
+                  <i class="material-icons" data-step="2" data-intro="click it to change your personal description.">edit</i>
                 </span>
             </div>
-            <button id="followBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+            <button id="followBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" data-step="3" data-intro="click it to follow">
                 <i class="material-icons">add_box</i>Follow
             </button>
 			<div id="myModal" class="modal">
@@ -92,7 +99,9 @@ $profile_data = mysqli_fetch_assoc($data)
 
 </div>
 
+<script src="static/js/intro.js"></script>
 <script src="static/js/material.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
   var isOwnProfile = <?=($userinfo['profile_id'] == $profile_id ? 'true' : 'false')?>;
 	var modal = document.getElementById("myModal");
@@ -100,6 +109,7 @@ $profile_data = mysqli_fetch_assoc($data)
 	var span = document.getElementsByClassName("close")[0];
 	var btn2 = document.getElementById("followBtn2");
   var x = document.getElementById("content");
+  var hBtn = document.getElementById("help_btn");
 	btn.onclick = function(){
 			modal.style.display = "block";
 	};
@@ -114,6 +124,9 @@ $profile_data = mysqli_fetch_assoc($data)
 			modal.style.display = "none";
 		}
 	};
+
+  hBtn.onclick = function() {introJs().start();};
+
 /*
 	window.onscroll = function(){myFunction()};
 	function myFunction() {
@@ -169,7 +182,10 @@ $profile_data = mysqli_fetch_assoc($data)
           document.getElementById("editD").onclick = function(){
             console.log(document.getElementById("pName").innerHTML);
             var newName = document.getElementById("pName".innerHTML);
-            alert("saved");
+            var x = document.getElementById("snackbar")
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+
 
         };
       }
@@ -188,6 +204,8 @@ $profile_data = mysqli_fetch_assoc($data)
     	};
     }
     }
+
+
 
 </script>
 </body>

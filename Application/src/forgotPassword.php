@@ -145,7 +145,7 @@
         var password2 = document.getElementById("password2").value;
 
         if (password1 != password2){
-            alert("Passwors do not match");
+            alert("Passwords do not match");
             return false;
         }
 

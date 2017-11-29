@@ -9,7 +9,7 @@
 require '../config.php';
 $userinfo = buboard_authenticate($mysqli, $authenticationKey);
 
-$title = mysqli_real_escape_string($mysqli, $_POST['title']);
+$title = mysqli_real_escape_string($mysqli, $_POST['newPostTitle']);
 $tag = mysqli_real_escape_string($mysqli, $_POST['tag']);
 $post = mysqli_real_escape_string($mysqli, $_POST['post']);
 
@@ -97,6 +97,5 @@ if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
             }
     }
 }
-
 
 ?>

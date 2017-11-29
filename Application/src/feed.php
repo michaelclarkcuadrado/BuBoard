@@ -35,7 +35,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
         </div>
     </header>
     <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">BuBoard</span>
+        <span class="mdl-layout-title"><?= $userinfo['real_name'] ?></span>
         <nav class="mdl-navigation mdl-color--blue-light_blue-800">
             <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
             <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
@@ -46,6 +46,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     <!-- Creates the main content of the page -->
     <main class="mdl--layout__content">
         <div id="postsView" class="mdl-grid">
+            <!--"No cards here" placeholder-->
             <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial"
                  class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
                 <div class="postTitleCard mdl-card__title mdl-color--blue">
@@ -58,7 +59,8 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     This view doesn't have any posts. Tell your friends about BuBoard, or follow more people.
                 </div>
             </div>
-            <transition-group name="list" id="main" mode="out-in" tag="span">
+            <!--Actual real, bona fide cards-->
+            <transition-group name="list" id="main" style="width:100%" mode="out-in" tag="span">
                 <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
                         <img class="thumbtack" src="static/image/thumbtack.png">
@@ -75,7 +77,8 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                                    class="material-icons mdl-list__item-avatar">person</i>
                                 <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
-                                <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display"><i v-if="post.isVerifiedAccount > 0" class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
+                                <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display"><i v-if="post.isVerifiedAccount > 0"
+                                                                                                                                    class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
                                 <span class="mdl-list__item-sub-title">{{formatSeconds(post.seconds_since)}}</span>
                             </span>
                                 </li>
@@ -121,7 +124,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                 </div>
             </transition-group>
             <!-- Loading card. Just a placeholder for mobile scroll -->
-            <div v-if="!isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell--hide-desktop mdl-shadow--8dp mdl-cell mdl-cell--4-col">
+            <div v-if="!isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell--hide-desktop mdl-cell--hide-tablet mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                 <div class="postTitleCard mdl-card__title mdl-color--blue">
                     <img class="thumbtack" src="static/image/thumbtack.png">
                     <h2 class="mdl-card__title-text">
@@ -133,6 +136,64 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
         </div>
     </main>
 </div>
+<!--Add post modal-->
+<div id="overlayModal">
+    <form name="mainform" method="post" onsubmit="return validateForm()" action="api/submitPost.php" enctype="multipart/form-data">
+        <div class="mdl-grid mainbodyModal mdl-shadow--24dp">
+            <div class="mdl-grid center-items">
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
+                    <h2 class="mdl-card__title-text mdl-color-text--blue-grey-600 title">Pin To Buboard</h2>
+                </div>
+
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label textModal">
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="title">Enter the title of your post</label>
+                        <input class="mdl-textfield__input" name="newPostTitle" />
+                    </div>
+                </div>
+
+
+                <div class="mdl-cell mdl-cell--12-col">
+                    <div class="mdl-textfield mdl-js-textfield wideModal">
+                        <textarea class="mdl-textfield__input " type="text" rows= "10" name="post"></textarea>
+                        <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="post">Your post goes here</label>
+                    </div>
+                </div>
+
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
+                    <label class="mdl-color-text--blue-grey-600">Upload a Post Picture</label>
+
+                </div>
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
+                    <input class="mdl-button" type="file" name="fileToUpload">
+                </div>
+
+
+                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                    <select class="mdl-selectfield__select" name="tag">
+                        <option value=""></option>
+                        <option value="Events">Events</option>
+                        <option value="Announcements">Announcements</option>
+                    </select>
+                    <label class="mdl-selectfield__label" for="professsion2">Select the tag for your post</label>
+                </div>
+
+                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
+                    <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit" value="uploadImage">
+                        Submit Post
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--Floating Add post button-->
+<button id="addButton" onclick="showNewPostModal()"
+        style="position: fixed; right: 24px; bottom: 24px; padding-top: 24px; margin-bottom: 0; z-index: 90; color: white"
+        class="mdl-button mdl-shadow--8dp mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--blue">
+    <i class="material-icons">add</i>
+</button>
+<!--Snackbar-->
 <div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
     <div class="mdl-snackbar__text"></div>
     <button class="mdl-snackbar__action" type="button"></button>
@@ -154,6 +215,13 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             timeout: length
         };
         document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
+    }
+
+    function showNewPostModal(){
+        //TODO
+        el = document.getElementById("overlayModal");
+        el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+        $('#postsContentPanel').toggleClass('blurred');
     }
 
     var allPostsVue = new Vue({
@@ -310,6 +378,11 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     return seconds + ' second' + numberEnding(seconds) + ' ago';
                 }
                 return 'Just Now';
+            },
+            scrollToTop: function () {
+                $("#postsContentPanel").animate({scrollTop: 0}, "fast", "swing", function () {
+
+                });
             },
             invertColor: function (hex, bw) {
                 // stolen from https://github.com/onury/invert-color MIT Licensed. -MC

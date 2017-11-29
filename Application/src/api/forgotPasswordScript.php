@@ -20,15 +20,7 @@ $password1 = mysqli_real_escape_string($mysqli, $_POST['password1']);
 $password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
 
 
-$check = true;
-
-if($password1 === $password2){
-
-} else {
-    $check = false;
-}
-
-if (!$check){
+if ($password1 !== $password2) {
     header("location: ../forgotPassword.php");
 }
 
@@ -45,7 +37,6 @@ $row = mysqli_fetch_assoc($result);
 $confirmcode = $row['email_confirmation_secret'];
 
 $confirmLink = "http://" . getenv('HOSTNAME') . "/api/changePassword.php?email=$email&confirmcode=$confirmcode&password=$password1";
-
 
 
 $message =
@@ -81,7 +72,6 @@ try {
 
 
 ?>
-
 
 
 <script>window.location = "/index.php?message=An email with password reset instructions has been sent"</script>

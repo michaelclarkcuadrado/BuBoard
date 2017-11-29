@@ -5,6 +5,11 @@ require_once 'config.php';
 $messagePresent = false;
 $message = null;
 
+if(isset($_COOKIE['username']) && isset($_COOKIE['token'])){
+    die("<script>window.location = '/feed.php'</script>");
+}
+
+//if authenticating, run login
 if (isset($_POST['username']) && isset($_POST['password'])) {
     $returnVal = buboard_login($mysqli, $authenticationKey);
     $messagePresent = $returnVal['messagePresent'];
@@ -34,7 +39,7 @@ if (isset($_GET['message'])) {
     </div>
     <div style="display: none; padding: 15px" id="sliding_login_card" class="mdl-card mdl-shadow--6dp">
         <form action="index.php" method="post">
-        <div class="mdl-typography--text-center"><?=($messagePresent ? $message : "")?></div>
+        <div class="mdl-typography--text-center"><?=($messagePresent ? strip_tags($message) : "")?></div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" name="username" type="email" id="login" required/>
             <label class="mdl-textfield__label" for="login">Email</label>

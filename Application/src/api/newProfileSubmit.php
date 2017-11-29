@@ -119,6 +119,7 @@ else {
 
                     } else {
                         $status = "Sorry, there was a problem uploading your file.";
+                        header("location: ../signup.php?message=$status");
                     }
 
                     rename("$target", "../usercontent/user_avatars/$profile_id.jpg");
@@ -158,6 +159,7 @@ else {
         $mail->send();
     } catch (Exception $e) {
         error_log('Message could not be sent.');
+        header("location: ../signup.php?message=An error was encountered when sending the email");
     }
 
 

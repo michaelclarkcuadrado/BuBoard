@@ -13,6 +13,7 @@ services:
     - "smtpPassword=buboardpassword"
     - "smtpHost=smtp.gmail.com"
     - "smtpPort=587"
+    - "smtpCollege=@gettysburg.edu"
   
  buboard-database:
   build: ./Database

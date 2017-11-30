@@ -15,12 +15,16 @@ $email = mysqli_real_escape_string($mysqli, $_POST['email']);
 $description = mysqli_real_escape_string($mysqli, $_POST['description']);
 $password1 = mysqli_real_escape_string($mysqli, $_POST['password1']);
 $password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
+$college = getenv('smtpCollege');
+
+// checks for the kill method
+$sql_check = false;
+$pic_check = false;
 
 // create a random confirm code string
 $confirmcode = rand();
 
 // Data check
-
 $check = true;
 $message = "";
 
@@ -44,9 +48,9 @@ else if ($email == ""){
     $message = "You must enter an email";
 }
 
-else if (!strpos($email, "@gettysburg.edu")){
+else if (!strpos($email, $college)){
     $check = false;
-    $message = "You must enter a Gettysburg email";
+    $message = 'You must enter an ' . $college .' email';
 }
 
 else if ($password1 == "" || $password2 == ""){
@@ -71,17 +75,35 @@ if (!$check){
     header("location: ../signup.php?message=$message");
 }
 
+
+
+// Data is now validated
 else {
 
+    $has_submitted_photo = 0;
+    if (!empty($_FILES) && isset($_FILES['fileToUpload'])){
+        $has_submitted_photo = 1;
+    }
 
     $posts_queryresult = mysqli_query($mysqli, "
       INSERT INTO `buboard_profiles` (`real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `profile_desc`, `has_submitted_photo`)
-      VALUES ('$firstname $lastname', NOW(), '$hash', '$confirmcode', '$email', 0, '$description', 0);
+      VALUES ('$firstname $lastname', NOW(), '$hash', '$confirmcode', '$email', 0, '$description', '$has_submitted_photo');
     ");
 
     $profile_id = mysqli_insert_id($mysqli);
 
-//auto-follow all verified accounts
+
+    if ($posts_queryresult){
+        $sql_check = true;
+    }
+    else{
+        kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
+        header("location: ../signup.php?message=Something went wrong");
+    }
+
+
+
+    //auto-follow all verified accounts
     $list_verified_accts = mysqli_query($mysqli, "SELECT profile_id FROM buboard_profiles WHERE isVerifiedAccount > 0");
     $stmt = mysqli_prepare($mysqli, "INSERT INTO profile_follows (follower_id, followee_id) VALUES (?, ?)");
     while ($verified_acct = mysqli_fetch_assoc($list_verified_accts)) {
@@ -110,15 +132,16 @@ else {
                     $uploadOk = 0;
                 }
 
-
                 if ($uploadOk == 1) {
                     $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
 
                     if ($isUploaded) {
                         $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
+                        $pic_check = true;
 
                     } else {
                         $status = "Sorry, there was a problem uploading your file.";
+                        kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
                         header("location: ../signup.php?message=$status");
                     }
 
@@ -137,7 +160,6 @@ else {
     <a href='$confirmLink'>$confirmLink</a>
     </html>
     ";
-
 
     $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
     try {
@@ -159,13 +181,10 @@ else {
         $mail->send();
     } catch (Exception $e) {
         error_log('Message could not be sent.');
+        kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
         header("location: ../signup.php?message=An error was encountered when sending the email");
     }
-
-
-
 }
-
 ?>
 
 

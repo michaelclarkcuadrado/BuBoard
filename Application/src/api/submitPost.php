@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Zachary Miller
- * Date: 11/13/2017
- * Time: 9:36 PM
- */
-
 require '../config.php';
 $userinfo = buboard_authenticate($mysqli, $authenticationKey);
 
@@ -14,88 +7,48 @@ $tag = mysqli_real_escape_string($mysqli, $_POST['tag']);
 $post = mysqli_real_escape_string($mysqli, $_POST['post']);
 
 // have to do checks at some point
-$check = true;
 if (empty($title)){
-    echo "check1";
-    $check == false;
-}
-if (empty($tag)){
-    echo "check2";
-    $check == false;
+    APIFail("All posts must have a title.");
 }
 if (empty($post)){
-    echo "check3";
-    $check == false;
+    APIFail("Your post must have a body.");
+}
+if (empty($tag)){
+    APIFail("All posts must have a tag set.");
 }
 
-if (!$check){
-    // go back to the feed page and throw an alert
-    header("location: ../createpost.php");
+//todo, handle multiple file uploads
+$imageUploaded = false;
+if(!empty($_FILES) && isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['size'] > 0){
+    if (!$_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK){
+        APIFail("That image could not be uploaded.");
+    } else {
+        $imageUploaded = true;
+    }
 }
-
-
-
-
-// Get the tag number to submit the query with
-$tag_query = mysqli_query($mysqli, "
-    SELECT category_id
-    FROM post_categories
-    WHERE category_name = '$tag';
-    ");
-
-
-
-$tag_id = mysqli_fetch_assoc($tag_query);
-
-
 
 $user_id = $userinfo['profile_id'];
-$tag_id = $tag_id["category_id"];
-
-
-
 
 $posts_queryresult = mysqli_query($mysqli, "
       INSERT INTO `buboard_posts` (post_by_user_id, belongs_to_category, post_contents, post_title, post_date)
-      VALUES ($user_id, '$tag_id', '$post', '$title', NOW());
+      VALUES ('$user_id', '$tag', '$post', '$title', CURDATE());
     ");
-
-
 
 $post_id = mysqli_insert_id($mysqli);
 
-
-if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
-    switch ($_FILES['fileToUpload']["error"]) {
-        case UPLOAD_ERR_OK:
-            $target = "../usercontent/post_attachments/";
-            $target = $target . basename($_FILES['fileToUpload']['name']);
-
-
-            $uploadOk = 1;
-
-            if (file_exists($target_file)) {
-                echo "Sorry, file already exists.";
-                $uploadOk = 0;
-            }
-
-            if (pathinfo($target, PATHINFO_EXTENSION) != "jpg") {
-                $uploadOk = 0;
-            }
-
-            if ($uploadOk == 1) {
-                $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
-
-                if ($isUploaded) {
-                    $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
-
-                } else {
-                    $status = "Sorry, there was a problem uploading your file.";
-                }
-
-                rename("$target", "../usercontent/post_attachments/$post_id.jpg");
-            }
+if($imageUploaded) {
+    //TODO validation here should totally be improved
+    if (strpos($_FILES['fileToUpload']['name'], "jpg") == false) {
+        mysqli_query($mysqli, "DELETE FROM post_attachments WHERE attachment_id = '$post_id'");
+        APIFail("The image must be in jpeg format.");
     }
+
+    $attachment_query = mysqli_query($mysqli, "
+      INSERT INTO post_attachments (belongs_to_post_id, post_attachment_num) VALUES ('$post_id', 1)
+    ");
+    $newImageName = "../usercontent/post_attachments/";
+    $newImageName .= mysqli_insert_id($mysqli) . ".jpg";
+    move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
 }
 
 ?>

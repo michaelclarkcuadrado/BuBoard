@@ -36,25 +36,21 @@
     text-align:center;
     z-index: 1000;
 }
+
 .mainbodyModal{
-    margin: 100px auto;
     background-color: #fff;
     padding:15px;
     text-align:center;
 }
 
 .textModal{
-    border-color: gray;
-    border-style: solid;
-    border-radius: 20px;
+
 }
 
 .wideModal{
-    border-color: gray;
-    border-style: solid;
-    border-radius: 20px;
-    height: 35%;
-    width: 80%;
+    /*background-color: rgba(0,125,0,0.2);*/
+    border-radius: 25px;
+    /*margin: 10px;*/
 }
 
 .blurred{

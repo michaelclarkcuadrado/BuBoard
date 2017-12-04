@@ -44,11 +44,11 @@ if($imageUploaded) {
     }
 
     $attachment_query = mysqli_query($mysqli, "
-      INSERT INTO post_attachments (belongs_to_post_id, post_attachment_num) VALUES ('$post_id', 1)
+      INSERT INTO post_attachments (belongs_to_post_id, post_attachment_num) VALUES ('$post_id', 1);
     ");
     $newImageName = "../usercontent/post_attachments/";
     $newImageName .= mysqli_insert_id($mysqli) . ".jpg";
-    move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
+    move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $newImageName);
 }
 
 ?>

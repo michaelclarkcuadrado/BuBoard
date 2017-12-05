@@ -31,7 +31,7 @@ $user_id = $userinfo['profile_id'];
 
 $posts_queryresult = mysqli_query($mysqli, "
       INSERT INTO `buboard_posts` (post_by_user_id, belongs_to_category, post_contents, post_title, post_date)
-      VALUES ('$user_id', '$tag', '$post', '$title', CURDATE());
+      VALUES ('$user_id', '$tag', '$post', '$title', NOW());
     ");
 
 $post_id = mysqli_insert_id($mysqli);

@@ -11,18 +11,8 @@
 }
 
 /* Small underbar for currently active view */
-.mdl-navigation__link.is-active-feed-view::after {
-    height: 2px;
-    width: 100%;
-    display: block;
-    content: " ";
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    background: #ff4081;
-    -webkit-animation: border-expand .2s cubic-bezier(.4,0,.4,1).01s alternate forwards;
-    animation: border-expand .2s cubic-bezier(.4,0,.4,1).01s alternate forwards;
-    transition: all 1s cubic-bezier(.4,0,1,1);
+.mdl-navigation__link.is-active-feed-view{
+    background-color: rgba(255,255,255,0.25);
 }
 
 /*for new post modal*/

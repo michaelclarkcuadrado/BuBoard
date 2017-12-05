@@ -17,62 +17,62 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
 </head>
 
 <body>
-<div id="contentWrapper">
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="postsContentPanel">
-        <header class="mdl-layout__header">
-            <!--Top row of header-->
-            <div class="mdl-layout__header-row">
-                <span class="mdl-layout-title">My BuBoard</span>
-                <div class="mdl-layout-spacer"></div>
-                <nav class="mdl-navigation" id="desktopCategoriesSwitcher">
-                    <a class="mdl-navigation__link is-active-feed-view" style="cursor: pointer" onclick="allPostsVue.changeView(0, 0, false)">Latest</a>
-                    <a class="mdl-navigation__link" style="cursor: pointer" onclick="allPostsVue.changeView(1, 0, false)">Subscriptions</a>
-                    <?php
-                    while ($category = mysqli_fetch_assoc($categoriesQuery)) {
-                        echo "<a class=\"mdl-navigation__link\" style=\"cursor: pointer\" onclick='allPostsVue.changeView(" . $category['category_id'] . " , 1, false)'>" . $category['category_name'] . "</a>";
-                    }
-                    ?>
-                </nav>
-            </div>
-        </header>
-        <div class="mdl-layout__drawer">
-            <span class="mdl-layout-title"><?= $userinfo['real_name'] ?></span>
-            <nav class="mdl-navigation mdl-color--blue-light_blue-800">
-                <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
-                <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
-                <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="postsContentPanel">
+    <header class="mdl-layout__header">
+        <!--Top row of header-->
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">My BuBoard</span>
+            <div class="mdl-layout-spacer"></div>
+            <nav class="mdl-navigation" id="desktopCategoriesSwitcher">
+                <!-- ID's are category_tab_curView_curViewIsCategory -->
+                <a class="mdl-navigation__link is-active-feed-view" id="category_tab_0_0" style="cursor: pointer" onclick="allPostsVue.changeView(0, 0, false)">Latest</a>
+                <a class="mdl-navigation__link" id="category_tab_1_0" style="cursor: pointer" onclick="allPostsVue.changeView(1, 0, false)">Subscriptions</a>
+                <?php
+                while ($category = mysqli_fetch_assoc($categoriesQuery)) {
+                    echo "<a class=\"mdl-navigation__link\" id='category_tab_".$category['category_id']."_1' style=\"cursor: pointer\" onclick='allPostsVue.changeView(" . $category['category_id'] . ", 1, false)'>" . $category['category_name'] . "</a>";
+                }
+                ?>
             </nav>
         </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title"><?= $userinfo['real_name'] ?></span>
+        <nav class="mdl-navigation mdl-color--blue-light_blue-800">
+            <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
+            <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
+            <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
+        </nav>
+    </div>
 
-        <!-- Creates the main content of the page -->
-        <main class="mdl--layout__content">
-            <div id="postsView" class="mdl-grid">
-                <!--"No cards here" placeholder-->
-                <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial"
-                     class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
+    <!-- Creates the main content of the page -->
+    <main class="mdl--layout__content">
+        <div id="postsView" class="mdl-grid">
+            <!--"No cards here" placeholder-->
+            <div v-if="postsObj.length == 0 && isAtViewPaginationEnd" style="overflow: initial"
+                 class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
+                <div class="postTitleCard mdl-card__title mdl-color--blue">
+                    <img class="thumbtack" src="static/image/thumbtack.png">
+                    <h2 class="mdl-card__title-text">
+                        Whoa There!
+                    </h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    This view doesn't have any posts. Tell your friends about BuBoard, or follow more people.
+                </div>
+            </div>
+            <!--Actual real, bona fide cards-->
+            <transition-group name="list" id="main" style="width:100%" mode="out-in" tag="span">
+                <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
                         <img class="thumbtack" src="static/image/thumbtack.png">
                         <h2 class="mdl-card__title-text">
-                            Whoa There!
+                            {{post.post_title}}
                         </h2>
                     </div>
-                    <div class="mdl-card__supporting-text">
-                        This view doesn't have any posts. Tell your friends about BuBoard, or follow more people.
-                    </div>
-                </div>
-                <!--Actual real, bona fide cards-->
-                <transition-group name="list" id="main" style="width:100%" mode="out-in" tag="span">
-                    <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
-                        <div class="postTitleCard mdl-card__title mdl-color--blue">
-                            <img class="thumbtack" src="static/image/thumbtack.png">
-                            <h2 class="mdl-card__title-text">
-                                {{post.post_title}}
-                            </h2>
-                        </div>
-                        <div style="width: unset" class="mdl-card__supporting-text">
-                            <div style="display: flex">
-                                <ul class="post-authorship mdl-list">
-                                    <li class="mdl-list__item mdl-list__item--two-line">
+                    <div style="width: unset" class="mdl-card__supporting-text">
+                        <div style="display: flex">
+                            <ul class="post-authorship mdl-list">
+                                <li class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
@@ -82,101 +82,100 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                                                                                                                                     class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
                                 <span class="mdl-list__item-sub-title">{{formatSeconds(post.seconds_since)}}</span>
                             </span>
-                                    </li>
-                                </ul>
-                                <div class="card-category-chip chip" v-bind:style="{backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
-                                    {{post.category_name}}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="post-contents">
-                                {{post.post_contents}}
-                            </div>
-                            <div v-if="Object.keys(post.attachment_id).length > 0" class="post-image-attachments">
-                                <br>
-                                Attachments:
-                                <div>
-                                    <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
-                                                class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
-                                </div>
-                            </div>
-                        </div>
-                        <!--own profile menu-->
-                        <div v-if="post.isOwnPost > 0" class="mdl-card__menu postOptionsMenu">
-                            <button :id=" post.post_id + 'cornermenu'"
-                                    class="mdl-button mdl-js-button mdl-button--icon">
-                                <i class="material-icons">more_vert</i>
-                            </button>
-                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                                :for=" post.post_id + 'cornermenu'">
-                                <li class="mdl-menu__item" v-on:click="deletePost(post.post_id)">Delete Post</li>
+                                </li>
                             </ul>
-                        </div>
-                        <!--Follow button-->
-                        <div v-else class="mdl-card__menu postOptionsMenu">
-                            <i style="color: white; cursor: pointer" :id="post.post_id + '-following'" v-on:click="manageSubscription(post.profile_id, post.isSubscribed)"
-                               v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">person_add</i>
-                            <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
-                                <span v-if="post.isSubscribed > 0">Unsubscribe</span>
-                                <span v-else>Subscribe</span>
+                            <div class="card-category-chip chip" v-bind:style="{backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
+                                {{post.category_name}}
                             </div>
                         </div>
+                        <hr>
+                        <div class="post-contents">
+                            {{post.post_contents}}
+                        </div>
+                        <div v-if="Object.keys(post.attachment_id).length > 0" class="post-image-attachments">
+                            <br>
+                            Attachments:
+                            <div>
+                                <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
+                                            class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--own profile menu-->
+                    <div v-if="post.isOwnPost > 0" class="mdl-card__menu postOptionsMenu">
+                        <button :id=" post.post_id + 'cornermenu'"
+                                class="mdl-button mdl-js-button mdl-button--icon">
+                            <i class="material-icons">more_vert</i>
+                        </button>
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                            :for=" post.post_id + 'cornermenu'">
+                            <li class="mdl-menu__item" v-on:click="deletePost(post.post_id)">Delete Post</li>
+                        </ul>
+                    </div>
+                    <!--Follow button-->
+                    <div v-else class="mdl-card__menu postOptionsMenu">
+                        <i style="color: white; cursor: pointer" :id="post.post_id + '-following'" v-on:click="manageSubscription(post.profile_id, post.isSubscribed)"
+                           v-bind:class="[post.isSubscribed > 0 ? 'subscribed-btn' : 'subscribe-btn', 'material-icons']">person_add</i>
+                        <div class="mdl-tooltip" :data-mdl-for="post.post_id + '-following'">
+                            <span v-if="post.isSubscribed > 0">Unsubscribe</span>
+                            <span v-else>Subscribe</span>
+                        </div>
+                    </div>
 
-                    </div>
-                </transition-group>
-                <!-- Loading card. Just a placeholder for mobile scroll -->
-                <div v-if="!isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell--hide-desktop mdl-cell--hide-tablet mdl-shadow--8dp mdl-cell mdl-cell--4-col">
-                    <div class="postTitleCard mdl-card__title mdl-color--blue">
-                        <img class="thumbtack" src="static/image/thumbtack.png">
-                        <h2 class="mdl-card__title-text">
-                            loading...
-                        </h2>
-                    </div>
-                    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
                 </div>
-            </div>
-        </main>
-    </div>
-    <!--Add post modal-->
-    <div id="overlayModal">
-        <form name="mainform" id="newPostForm" method="post" onsubmit="submitNewPost(event)" enctype="multipart/form-data">
-            <div class="mdl-grid mainbodyModal mdl-shadow--24dp">
-                <div style="display: inline-block; width: 100%" class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
-                    <h2 style='display: inline-block; float: left' class="mdl-card__title-text mdl-color-text--blue-grey-600 title">Pin To Buboard</h2>
-                    <i onclick="showNewPostModal()" style="float: right; cursor:pointer; display: inline-block; color: unset" class="material-icons">close</i>
+            </transition-group>
+            <!-- Loading card. Just a placeholder for mobile scroll -->
+            <div v-if="!isAtViewPaginationEnd" style="overflow: initial" class="mdl-card mdl-cell--hide-desktop mdl-cell--hide-tablet mdl-shadow--8dp mdl-cell mdl-cell--4-col">
+                <div class="postTitleCard mdl-card__title mdl-color--blue">
+                    <img class="thumbtack" src="static/image/thumbtack.png">
+                    <h2 class="mdl-card__title-text">
+                        loading...
+                    </h2>
                 </div>
-                <div class="mdl-cell mdl-cell--4-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label textModal">
-                    <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="title">Title</label>
-                    <input class="mdl-textfield__input" name="newPostTitle"/>
-                </div>
-                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-textfield mdl-js-textfield wideModal">
-                    <textarea class="mdl-textfield__input" type="text" rows="10" name="post"></textarea>
-                    <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="post">Tell the world...</label>
-                </div>
-                <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone"
-                ">
-                <label class="mdl-color-text--blue-grey-600">Add an attachment. (Optional, .jpg only)</label><br>
-                <input class="mdl-button" type="file" name="fileToUpload">
+                <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
             </div>
-            <div style="width: 100%" class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                <select class="mdl-selectfield__select" name="tag">
-                    <option selected disabled value="">Select a tag</option>
-                    <?php
-                    mysqli_data_seek($categoriesQuery, 0);
-                    while ($category = mysqli_fetch_assoc($categoriesQuery)) {
-                        echo "<option value='" . $category['category_id'] . "'>" . $category['category_name'] . "</option>";
-                    }
-                    ?>
-                </select>
+        </div>
+    </main>
+</div>
+<!--Add post modal-->
+<div id="overlayModal">
+    <form name="mainform" id="newPostForm" method="post" onsubmit="submitNewPost(event)" enctype="multipart/form-data">
+        <div class="mdl-grid mainbodyModal mdl-shadow--24dp">
+            <div style="display: inline-block; width: 100%" class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
+                <h2 style='display: inline-block; float: left' class="mdl-card__title-text mdl-color-text--blue-grey-600 title">Pin To Buboard</h2>
+                <i onclick="showNewPostModal()" style="float: right; cursor:pointer; display: inline-block; color: unset" class="material-icons">close</i>
             </div>
-            <div style="width:100%"><p id="postingError" style="color: red"></p></div>
-            <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-                <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit"
-                        value="uploadImage">
-                    Submit Post
-                </button>
+            <div class="mdl-cell mdl-cell--4-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label textModal">
+                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="title">Title</label>
+                <input class="mdl-textfield__input" name="newPostTitle"/>
             </div>
-    </div>
+            <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-textfield mdl-js-textfield wideModal">
+                <textarea class="mdl-textfield__input" type="text" rows="10" name="post"></textarea>
+                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="post">Tell the world...</label>
+            </div>
+            <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone"
+            ">
+            <label class="mdl-color-text--blue-grey-600">Add an attachment. (Optional, .jpg only)</label><br>
+            <input class="mdl-button" type="file" name="fileToUpload">
+        </div>
+        <div style="width: 100%" class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+            <select class="mdl-selectfield__select" name="tag">
+                <option selected disabled value="">Select a tag</option>
+                <?php
+                mysqli_data_seek($categoriesQuery, 0);
+                while ($category = mysqli_fetch_assoc($categoriesQuery)) {
+                    echo "<option value='" . $category['category_id'] . "'>" . $category['category_name'] . "</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div style="width:100%"><p id="postingError" style="color: red"></p></div>
+        <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+            <button class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white submit" type="submit" name="submit"
+                    value="uploadImage">
+                Submit Post
+            </button>
+        </div>
     </form>
 </div>
 <!--Floating Add post button-->
@@ -185,7 +184,6 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
         class="mdl-button mdl-shadow--8dp mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--blue">
     <i class="material-icons">add</i>
 </button>
-</div>
 <!--Snackbar-->
 <div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
     <div class="mdl-snackbar__text"></div>
@@ -212,11 +210,11 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
 
     function showNewPostModal() {
         el = document.getElementById("overlayModal");
-        el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+        el.style.visibility = (el.style.visibility === "visible") ? "hidden" : "visible";
         $('#postsContentPanel').toggleClass('blurred');
     }
 
-    function submitNewPost(e){
+    function submitNewPost(e) {
         e.preventDefault();
         var formData = new FormData($('#newPostForm')[0]);
         $.ajax({
@@ -225,16 +223,17 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             data: formData,
             contentType: false,
             processData: false,
-            success: function(data) {
+            success: function (data) {
                 $('#postingError').html('');
                 $('#newPostForm')[0].reset();
                 //reset mdl state. Bug in MDL
-                $('.mdl-textfield').each(function(){$(this)[0].MaterialTextfield.change()});
+                $('.mdl-textfield').each(function () {
+                    $(this)[0].MaterialTextfield.change()
+                });
                 showNewPostModal();
                 allPostsVue.scrollToTop(allPostsVue.refreshWholePage());
             },
-            error: function(data) {
-                console.log(data);
+            error: function (data) {
                 $('#postingError').html(data.responseText);
             }
         });
@@ -276,18 +275,53 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             componentHandler.upgradeDom();
         },
         methods: {
-            refreshWholePage: function() {
-              this.changeView(this.curView, this.curViewIsCategory, true)
+            refreshWholePage: function () {
+                this.changeView(this.curView, this.curViewIsCategory, true)
             },
-            /*Clear all state and request new one with new filter flags*/
+            /*Clear all state and reques.postt new one with new filter flags*/
             changeView: function (viewID, isCategory, override) {
                 if (this.curViewIsCategory !== isCategory || this.curView !== viewID || override) {
+                    $('#category_tab_' + this.curView + '_' + this.curViewIsCategory).toggleClass('is-active-feed-view');
                     this.curView = viewID;
                     this.curViewIsCategory = isCategory;
                     this.latestPostCurView = Infinity;
                     this.isAtViewPaginationEnd = false;
                     this.postsObj = [];
+                    $('#category_tab_' + viewID + '_' + isCategory).toggleClass('is-active-feed-view');
                     this.getPosts();
+                }
+            },
+            swipeView: function(direction) { //Figures out which view to move to based on a left or right swipe
+                //direction is true for right, left for left
+                if(direction){ //moving right
+                    if(this.curViewIsCategory === 1){
+                        //smallest curview value is assumed to be 1 based on mysql's first default auto_increment
+                        if(this.curView >= this.categories.length){
+                            return;
+                        } else {
+                            this.changeView(this.curView + 1, 1, false);
+                        }
+                    } else { //if not in categories
+                        if(this.curView === 0){
+                            this.changeView(1, 0, false);
+                        } else {
+                            this.changeView(1, 1, false);
+                        }
+                    }
+                } else { // moving left
+                    if(this.curViewIsCategory === 1){
+                        if(this.curView <= 1){
+                            this.changeView(1, 0, false);
+                        } else {
+                            this.changeView(this.curView - 1, 1, false);
+                        }
+                    } else { //not in categories
+                        if(this.curView === 0){
+                            return;
+                        } else {
+                            this.changeView(0, 0, false);
+                        }
+                    }
                 }
             },
             getPosts: function () {
@@ -334,13 +368,13 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                 }
                 $.get('api/subscribe.php', argsObj, function () {
                     //ux - if in "following" view and you're unsubscribing, just remove posts from postsObj
-                    if (self.curViewIsCategory == 0 && self.curView == 1 && argsObj['action'] == 'unsubscribe') {
+                    if (self.curViewIsCategory === 0 && self.curView === 1 && argsObj['action'] === 'unsubscribe') {
                         self.postsObj = self.postsObj.filter(function (post) {
                             return (post['profile_id'] !== subscribeToID);
                         });
                     } else { // else loop through postsObj to flip the subscription status of all posts under that account.
                         for (var i = 0; i < self.postsObj.length; i++) {
-                            if (self.postsObj[i]['profile_id'] == subscribeToID) {
+                            if (self.postsObj[i]['profile_id'] === subscribeToID) {
                                 if (parseInt(self.postsObj[i]['isSubscribed']) > 0) {
                                     self.postsObj[i]['isSubscribed'] = 0;
                                 } else {
@@ -358,7 +392,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                 var self = this;
                 $.get('api/deletePost.php', {post_id: post_id}, function () {
                     for (var i = 0; i < self.postsObj.length; i++) {
-                        if (self.postsObj[i]['post_id'] == post_id) {
+                        if (self.postsObj[i]['post_id'] === post_id) {
                             self.postsObj.splice(i, 1);
                             break;
                         }

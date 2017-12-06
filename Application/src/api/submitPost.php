@@ -36,6 +36,9 @@ $posts_queryresult = mysqli_query($mysqli, "
 
 $post_id = mysqli_insert_id($mysqli);
 
+//increment all followers unread by 1
+$subscribersToPoster = mysqli_query($mysqli, "UPDATE buboard_profiles JOIN profile_follows follow ON buboard_profiles.profile_id = follow.follower_id SET followers_posts_since_feed_pull = followers_posts_since_feed_pull + 1 WHERE followee_id = '".$userinfo['profile_id']."'");
+
 if($imageUploaded) {
     //TODO validation here should totally be improved
     if (strpos($_FILES['fileToUpload']['name'], "jpg") == false) {
@@ -50,5 +53,3 @@ if($imageUploaded) {
     $newImageName .= mysqli_insert_id($mysqli) . ".jpg";
     move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $newImageName);
 }
-
-?>

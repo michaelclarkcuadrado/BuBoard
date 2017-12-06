@@ -48,10 +48,10 @@ FROM buboard_posts
   JOIN buboard_profiles ON buboard_posts.post_by_user_id = buboard_profiles.profile_id
   JOIN post_categories ON buboard_posts.belongs_to_category = post_categories.category_id
   LEFT JOIN post_attachments ON buboard_posts.post_id = post_attachments.belongs_to_post_id
-  LEFT JOIN (SELECT * FROM profile_follows WHERE follower_id = '$userID') t1 ON post_by_user_id=followee_id
+  LEFT JOIN (SELECT followee_id, follower_id FROM profile_follows WHERE follower_id = '$userID') t1 ON post_by_user_id=followee_id
   ";
 
-//no where here: 'latest' feed
+//no where clause here: 'latest' feed
 $hasWhereStatement = false;
 if ($curViewIsCategory == 0 && $curView == 1){
     //'following' feed
@@ -73,6 +73,9 @@ $query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 10";
 /*End build query*/
 
 $posts_queryresult = mysqli_query($mysqli, $query);
+
+//update number of unread posts to zero, since this person is online
+mysqli_query($mysqli, "UPDATE buboard_profiles SET followers_posts_since_feed_pull = 0");
 
 $formatted_posts = array();
 while ($post = mysqli_fetch_assoc($posts_queryresult)) {

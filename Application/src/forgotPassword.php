@@ -16,6 +16,13 @@
     <link rel="stylesheet" type="text/css" href="static/css/signup.css"/>
     <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Used for favicon generation -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/manifest.json">
+    <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
 </head>
 
 
@@ -100,26 +107,26 @@
                             <img class="thumbtack" src="static/image/thumbtack.png">
                         </div>
                         <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col">
-                            <h4 class="mdl-color-text--blue-grey-600 title">Enter in your information hit submit. After that a confirmation email will be sent to your email address to confirm this change</h4>
+                            <h4 class="mdl-color-text--blue-grey-600 title">Enter in your information click submit</h4>
                         </div>
 
                         <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="email">Please enter your accounts email</label>
+                                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="email">Enter your accounts email</label>
                                 <input class="mdl-textfield__input" id="email" name="email"/>
                             </div>
                         </div>
 
                         <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">Please enter your new password</label>
+                                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password1">Enter your new password</label>
                                 <input class="mdl-textfield__input" type="password" id="password1" name="password1"/>
                             </div>
                         </div>
 
                         <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label text">
-                                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">Please re-enter your new password</label>
+                                <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="password2">Re-enter your new password</label>
                                 <input class="mdl-textfield__input" type="password" id="password2" name="password2"/>
                             </div>
                         </div>

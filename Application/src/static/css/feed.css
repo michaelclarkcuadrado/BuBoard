@@ -101,7 +101,7 @@
     font-size: 14px;
     padding: 5px;
     /*border-radius: 15px;*/
-    height: fit-content;
+    height: 100%;
 }
 
 .verified_user {

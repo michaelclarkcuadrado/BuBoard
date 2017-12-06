@@ -62,7 +62,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     </div>
                 </div>
                 <!--Actual real, bona fide cards-->
-                <transition-group :name="listTransitionType" id="main" style="width:100%" mode="out-in" tag="span">
+                <transition-group :name="listTransitionType" id="main" style="width:100%" tag="span">
                     <div v-for="post in postsObj" v-bind:key="post" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--4-col">
                         <div class="postTitleCard mdl-card__title mdl-color--blue">
                             <img class="thumbtack" src="static/image/thumbtack.png">

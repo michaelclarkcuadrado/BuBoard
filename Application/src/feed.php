@@ -129,7 +129,6 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                                 <span v-else>Subscribe</span>
                             </div>
                         </div>
-
                     </div>
                 </transition-group>
                 <!-- Loading card. Just a placeholder for mobile scroll -->
@@ -189,7 +188,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     <!--Floating Add post button-->
     <button id="addButton" onclick="showNewPostModal()"
             style="position: fixed; right: 24px; bottom: 24px; padding-top: 24px; margin-bottom: 0; z-index: 90; color: white"
-            class="mdl-button mdl-shadow--8dp mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--blue">
+            class="mdl-button mdl-shadow--8dp mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--light-blue-400">
         <i class="material-icons">add</i>
     </button>
 </div>
@@ -277,24 +276,23 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                 if (!(self.scrollLock || self.isAtViewPaginationEnd)) {
                     if (this.scrollTop >= (this.scrollHeight - this.offsetHeight) - 100) {
                         self.listTransitionType = 'list';
-                        Vue.nextTick(function(){
+                        Vue.nextTick(function () {
                             self.getPosts();
                         });
                     }
                 }
             });
-            if(window.matchMedia("screen and (max-width: 1024px)").matches){
-                console.log('starting swipe detect');
+            if (window.matchMedia("screen and (max-width: 1024px)").matches) {
                 $('body').swipe({
                     swipe: function (event, direction) {
                         if (direction === "left") {
                             self.listTransitionType = 'swipeleft';
-                            Vue.nextTick(function() {
+                            Vue.nextTick(function () {
                                 snack(self.swipeView(false), 1000);
                             });
                         } else if (direction === "right") {
                             self.listTransitionType = 'swiperight';
-                            Vue.nextTick(function() {
+                            Vue.nextTick(function () {
                                 snack(self.swipeView(true), 1000);
                             });
                         }
@@ -311,7 +309,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             refreshWholePage: function () {
                 var self = this;
                 this.listTransitionType = 'list';
-                Vue.nextTick(function() {
+                Vue.nextTick(function () {
                     self.changeView(this.curView, this.curViewIsCategory, true)
                 });
             },
@@ -370,7 +368,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             getPosts: function () {
                 this.scrollLock = true;
                 if (!this.isAtViewPaginationEnd) {
-                    self = this;
+                    var self = this;
                     $.getJSON('api/getPosts.php', {
                             curViewIsCategory: this.curViewIsCategory,
                             curView: this.curView,

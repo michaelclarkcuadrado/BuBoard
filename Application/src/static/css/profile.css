@@ -23,7 +23,7 @@
     display: inline-block;
     width: 100%;
     color: white;
-    background-color: #7e57c2;
+    background-color: seagreen;
 }
 
 .mdl-card__media {
@@ -40,200 +40,135 @@
 }
 
 .content {
-  /*  background-color: rgba(255,255,255,0.2);*/
+    /*background-color: rgba(255,255,255,0.2);*/
     border-radius: 10px;
     vertical-align: middle;
     width: initial;
     color: white;
-    display: inline-block;
+    display: block;
     margin-left: 16px;
     padding:5px;
-
-
-
 }
 
-#followBtn {
-    float: right;
-    margin: 20px;
-	background-color: #512da8;
-	-webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
+.hazard_panel {
+    display: flex;
+    margin: 16px;
+    padding: 5px;
+    width: fit-content;
+    background: repeating-linear-gradient(
+            -55deg,
+            yellow,
+            yellow 10px,
+            black 10px,
+            black 20px
+    );
 }
 
-#followBtn:hover {
-	background-color: rgba(255,255,255,0.2);;
-	color: white;
+.verified_user {
+    color: blue;
+    margin-right: 2px;
 }
 
-#followBtn2 {
-	position: fixed;
-	bottom: 5%;
-	right: 3%;
-	visibility: hidden;
-}
-h4 {
-    font-weight: bolder;
-}
-
-p {
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-	color: black;
-	text-align:center;
-	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    -webkit-animation-name: animateopen;
-    -webkit-animation-duration: 0.5s;
-    animation-name: animateopen;
-    animation-duration: 0.5s
-}
-
-@keyframes animateopen {
-    from {opacity:0}
-    to {opacity:1}
-}
-@-webkit-keyframes animateopen {
-	from {opacity:0}
-    to {opacity:1}
-}
-/* The Close Button */
-.close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 40px;
-    font-weight: bold;
-
-}
-
-.close:hover,
-.close:focus {
-
-    text-decoration: none;
+.post-name-display {
     cursor: pointer;
-	color: teal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
 }
-
-#checkmark {
-	height: 200px;
-	width: 200px;
-	display:block;
-	margin: auto;
-	padding-top: 30px;
-}
-
-.example {
-	text-align:center;
-}
-
-/*@media screen and (max-width: 500px) {*/
-	/*.mdl-layout__drawer-button {*/
-		/*display: none;*/
-	/*}*/
-	/*.navbar {*/
-    /*background-color: #333;*/
-    /*overflow: hidden;*/
-    /*position: fixed;*/
-    /*bottom: 0;*/
-    /*width: 100%;*/
-	/*height: 7%;*/
-/*}*/
-
-/*!* Style the links inside the navigation bar *!*/
-/*.navbar a {*/
-    /*float: left;*/
-    /*display: block;*/
-    /*color: #f2f2f2;*/
-    /*text-align: center;*/
-    /*margin-top: 10px;*/
-    /*text-decoration: none;*/
-    /*font-size: 17px;*/
-		/*width: 25%;*/
-
-/*}*/
-
-/*!* Change the color of links on hover *!*/
-/*.navbar a:hover {*/
-
-    /*color: white;*/
-/*}*/
 
 .mdl-layout__header-row a {
 	visibility: hidden;
 }
 
-#followBtn2  {
-	bottom: 10%;
-}
-#edit h4{
-	float:left;
-}
-#edit i{
-	float:left;
-	padding-top: 25px;
-	padding-left: 10px;
+/* Start Post Related CSS*/
+#postsContentPanel {
+    background-image: url('/static/image/corktile.jpg');
+    background-attachment: local;
 }
 
-#snackbar {
-    visibility: hidden;
-    min-width: 250px;
-    margin-left: -125px;
-    background-color: rgba(51,51,51,0.7);
-    color: #fff;
-    text-align: center;
-    border-radius: 5px;
-    padding: 16px;
+.mdl-card__title-text {
+    color: white;
+}
+
+.post-image-attachments {
+    font-size: smaller;
+}
+
+.post-authorship {
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+}
+
+.post-authorship > li {
+    height: 50px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0px;
+}
+
+.post-name-display {
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+}
+
+#help_btn {
+    padding: 0;
+}
+
+.chip {
+    vertical-align: text-top;
+    font-size: 14px;
+    padding: 5px;
+    /*border-radius: 15px;*/
+    height: 100%;
+}
+
+.verified_user {
+    font-size: medium;
+    color: blue;
+    margin-right: 2px;
+}
+
+.subscribe-btn {
+    color: black;
+    vertical-align: text-top;
+}
+
+.subscribed-btn {
+    color: 	#ffa726 !important;
+    vertical-align: text-top;
+}
+
+.addButtonPlacement {
     position: fixed;
-    z-index: 1;
-    left: 50%;
-    bottom: 30px;
-    font-size: 17px;
+    right: 24px;
+    bottom: 24px;
+    padding-top: 24px;
+    margin-bottom: 0;
+    z-index: 99;
 }
 
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+.thumbtack {
+    position: absolute;
+    left: calc(50% - 36px);
+    top: -12px;
 }
 
-@-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
+.postTitleCard {
+    padding-top: 35px;
 }
 
-@keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
+.postOptionsMenu {
+    padding-top: 19px;
 }
 
-@-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
+.mdl-card {
+    overflow: initial;
+    height: fit-content;
+    display: inline-grid;
 }

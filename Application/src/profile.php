@@ -7,11 +7,22 @@ if (isset($_GET['id'])) {
 } else {
     $profile_id = $userinfo['profile_id'];
 }
-$data = mysqli_query($mysqli, "select profile_id, real_name, email_address, profile_desc, has_submitted_photo from buboard_profiles where profile_id = '$profile_id'");
 
-$profile_data = mysqli_fetch_assoc($data)
-
-
+$curProfileData = mysqli_fetch_assoc(mysqli_query($mysqli, "
+  SELECT
+  profile_id,
+  real_name,
+  isAdmin,
+  isVerifiedAccount,
+  has_submitted_photo,
+  profile_desc,
+  email_address,
+  (follower_id IS NOT NULL) as isSubscribed
+FROM buboard_profiles
+  LEFT JOIN profile_follows follow ON buboard_profiles.profile_id =follow.followee_id AND follower_id = " . $userinfo['profile_id'] . "
+WHERE profile_id = $profile_id
+"));
+$curProfileData['isOwnProfile'] = ($curProfileData['profile_id'] === $userinfo['profile_id'] ? 1 : 0);
 ?>
 
 <!doctype html>
@@ -32,188 +43,309 @@ $profile_data = mysqli_fetch_assoc($data)
     <link rel="manifest" href="/favicon/manifest.json">
     <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
 </head>
-<body class="mdl-color--blue-50" style="height:1500px" onload="checkUser()">
+<body class="mdl-color--blue-50">
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row" >
+        <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Personal Profile</span>
             <div class="mdl-layout-spacer"></div>
-            <!--<a class="mdl-navigation__link" id="help_btn" href="help.php">
-              <i class="material-icons">help</i>
-                <div class="mdl-tooltip" data-mdl-for="help_btn">
-                    Need Help?
-                </div>
-            </a>-->
-            <span id="help_btn"><i class="material-icons">help</i></span>
-
         </div>
     </header>
 
     <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">BuBoard</span>
+        <span class="mdl-layout-title"><?= $userinfo['real_name'] ?></span>
         <nav class="mdl-navigation mdl-color--blue-light_blue-800">
             <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
             <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
             <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
-            <a class="mdl-navigation__link" href="javascript:void(0);"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help</i>Help</a>
         </nav>
-      </div>
-
-
-<!--		<div class="navbar">-->
-<!--			      <a href="feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i></a>-->
-<!--            <a  href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i></a>-->
-<!--            <a  href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i></a>-->
-<!--            <a href="help.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help</i></a>-->
-<!--		</div>-->
-
-    <main class="mdl--layout__content">
+    </div>
+    <main id="profile_page_main" class="mdl--layout__content">
         <div class="card-profile mdl-shadow--2dp">
-            <img id="profile_image" src="<?=($profile_data['has_submitted_photo'] > 0 ? '/usercontent/user_avatars/'.$profile_id.'.jpg' : '/static/image/portrait.jpg')?>">
+            <img v-if="has_submitted_photo > 0" id="profile_image" :src="'/usercontent/user_avatars/' + profile_id + '.jpg'">
+            <img v-else id="profile_image" src="/static/image/portrait.jpg">
             <div class="content" id="content">
-                <span id ="edit">
-                  <h4 id="pName"><?= $profile_data['real_name'] ?></h4>
-                  <i class="material-icons"id="editN" style="visibility:visible" data-step="1" data-intro="click it to change your user name.">edit</i>
-                  <i class="material-icons" id="editD" style="visibility:hidden">save</i>
-                  <div id="snackbar">change saved</div>
-                  </br>
-                  <p><?= $profile_data['email_address'] ?><br>
-                  <?= $profile_data['profile_desc'] ?>
-                  <i class="material-icons" data-step="2" data-intro="click it to change your personal description.">edit</i>
-                </span>
+                <h5><i v-if="isVerifiedAccount"
+                       class="material-icons verified_user">verified_user</i>
+                    {{ real_name }}
+                </h5>
+                <a style="background-color: rgba(255,255,255,0.2); padding: 4px; border-radius: 5px; word-wrap: break-word" :href="'mailto:' + email_address">Email Address: {{email_address}}</a>
+                <p>{{ profile_desc }}</p>
             </div>
-            <button id="followBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" data-step="3" data-intro="click it to follow">
-                <i class="material-icons">add_box</i>Follow
-            </button>
-			<div id="myModal" class="modal">
-				<div class="modal-content">
-					<span class="close">&times;</span>
-					<img id="checkmark" src="static/image/check_mark.png">
-					<h3>Congrats!</h3>
-					<p>you have successfully followed  <u><?= $profile_data['real_name'] ?></u>.</p>
-				</div>
-			</div>
+            <div class="hazard_panel" v-if="curProfileIsAdmin">
+                <div style="background-color: seagreen; margin: 5px; padding: 5px;">
+                    Administrator Controls<br>
+                    <label>
+                        System Admin
+                        <input v-model="isAdmin" type="checkbox">
+                    </label>
+                    <label>
+                        Verified User
+                        <input v-model="isVerifiedAccount" type="checkbox">
+                    </label>
+                </div>
+            </div>
         </div>
-		<div class="example">
-
-			<button id="followBtn2" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-                <i class="material-icons">add_box</i>Follow
-            </button>
-		</div>
-
-
+        <div id="infoPane" style="margin: 0; padding: 0" class="mdl-grid">
+            <div v-if="isOwnProfile && Object.keys(subscribees).length > 0" style="height:100%" class="mdl-cell mdl-cell--4-col">
+                <h5 style="margin: 0; padding: 4px">Your Subscriptions </h5>
+                <ul style="margin-top: 0; padding-top: 0" class="mdl-list">
+                    <li v-for="subscribee in subscribees" class="mdl-list__item mdl-list__item--two-line">
+                            <span class="mdl-list__item-primary-content">
+                                <i v-if="subscribee.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + subscribee.profile_id" style="cursor: pointer"
+                                   class="material-icons mdl-list__item-avatar">person</i>
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscribee.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + subscribee.profile_id"
+                                     style="cursor: pointer" class="mdl-list__item-avatar">
+                                <span v-on:click="window.location='profile.php?id=' + subscribee.profile_id" class="post-name-display"><i v-if="subscribee.isVerifiedAccount > 0"
+                                                                                                                                          class="material-icons verified_user">verified_user</i>{{subscribee.real_name}}</span>
+                                <span class="mdl-list__item-sub-title">Subscribed</span>
+                            </span>
+                        <span class="mdl-list__item-secondary-content">
+                                <a class="mdl-list__item-secondary-action" v-on:click="unsubscribe(subscribee.profile_id)"><i class="material-icons">person_add</i></a>
+                            </span>
+                    </li>
+                </ul>
+            </div>
+            <div id="postsContentPanel" :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile && Object.keys('subscribees').length > 0) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
+                <div v-for="post in postsObj" v-bind:key="post" :class="['mdl-card', 'mdl-shadow--8dp', 'mdl-cell', 'mdl-cell--4-col', (isOwnProfile && Object.keys('subscribees').length > 0 ? 'mdl-cell--6-col-desktop mdl-cell--8-col-tablet' : '')]">
+                    <div class="postTitleCard mdl-card__title mdl-color--blue">
+                        <img class="thumbtack" src="static/image/thumbtack.png">
+                        <h2 class="mdl-card__title-text">
+                            {{post.post_title}}
+                        </h2>
+                    </div>
+                    <div style="width: unset" class="mdl-card__supporting-text">
+                        <div style="display: flex">
+                            <ul class="post-authorship mdl-list">
+                                <li class="mdl-list__item mdl-list__item--two-line">
+                            <span class="mdl-list__item-primary-content">
+                                <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
+                                   class="material-icons mdl-list__item-avatar">person</i>
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
+                                     style="cursor: pointer" class="mdl-list__item-avatar">
+                                <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display"><i v-if="post.isVerifiedAccount > 0"
+                                                                                                                                    class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
+                                <span class="mdl-list__item-sub-title">{{formatSeconds(post.seconds_since)}}</span>
+                            </span>
+                                </li>
+                            </ul>
+                            <div class="card-category-chip chip" v-bind:style="{backgroundColor: '#' + post.category_color, color: invertColor(post.category_color, true)}">
+                                {{post.category_name}}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="post-contents">
+                            {{post.post_contents}}
+                        </div>
+                        <div v-if="Object.keys(post.attachment_id).length > 0" class="post-image-attachments">
+                            <br>
+                            Attachments:
+                            <div>
+                                <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
+                                            class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--own profile menu-->
+                    <div v-if="post.isOwnPost > 0 || curProfileIsAdmin" class="mdl-card__menu postOptionsMenu">
+                        <button :id=" post.post_id + 'cornermenu'"
+                                class="mdl-button mdl-js-button mdl-button--icon">
+                            <i class="material-icons">more_vert</i>
+                        </button>
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                            :for=" post.post_id + 'cornermenu'">
+                            <li class="mdl-menu__item" v-on:click="deletePost(post.post_id)">Delete Post</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
 </div>
-
-<script src="static/js/intro.js"></script>
+<!--Snackbar-->
+<div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
 <script src="static/js/material.min.js"></script>
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/vue.min.js"></script>
 <script>
-  var isOwnProfile = <?=($userinfo['profile_id'] == $profile_id ? 'true' : 'false')?>;
-	var modal = document.getElementById("myModal");
-	var btn = document.getElementById("followBtn");
-	var span = document.getElementsByClassName("close")[0];
-	var btn2 = document.getElementById("followBtn2");
-  var x = document.getElementById("content");
-  var hBtn = document.getElementById("help_btn");
-	btn.onclick = function(){
-			modal.style.display = "block";
-	};
-
-	span.onclick = function() {
-			modal.style.display = "none";
-	};
-
-
-	window.onclick = function(event) {
-		if(event.target == modal) {
-			modal.style.display = "none";
-		}
-	};
-
-  hBtn.onclick = function() {introJs().start();};
-
-/*
-	window.onscroll = function(){myFunction()};
-	function myFunction() {
-
-		if (document.body.scrollTop > 150 ||document.documentElement.scrollTop > 150){
-			document.getElementById("followBtn2").style.visibility = "visible";
-
-		}
-		else {
-			document.getElementById("followBtn2").style.visibility = "hidden";
-		}
-	};
-
-    document.getElementById("editN").onclick = function(event){
-      //alert("click");
-      document.getElementById("pName").contentEditable = true;
-      document.getElementById("editN").style.display = "none";
-      document.getElementById("editD").style.visibility = "visible";
-      document.getElementById("editD").onclick = function(){
-      console.log(document.getElementById("pName").innerHTML);
-      alert("saved");
-      };
-
-    };
-
-  document.getElementById("edit").onclick = function(){
-    var y = x.getElementsByClassName("material-icons");
-    if(y[0].style.visibility === 'visible'){
-      y[1].style.visibility = "visible";
-    //  y[0].style.display = "none";
+    function snack(message, length) {
+        var data = {
+            message: message,
+            timeout: length
+        };
+        document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
     }
-    if(y[1].style.visibility === 'visible'){
-      y[0].style.visibility = "visible";
-      y[1].style.display = "none";
-    }
-  };*/
-
     function logout() {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.replace('/');
-    };
-
-    function checkUser() {
-      if(isOwnProfile === true) {
-        btn.style.display = "none";
-        btn2.style.display = "none";
-        document.getElementById("editN").onclick = function(event){
-          //alert("click");
-          document.getElementById("pName").contentEditable = true;
-          document.getElementById("editN").style.display = "none";
-          document.getElementById("editD").style.visibility = "visible";
-          document.getElementById("editD").onclick = function(){
-            console.log(document.getElementById("pName").innerHTML);
-            var newName = document.getElementById("pName".innerHTML);
-            var x = document.getElementById("snackbar")
-            x.className = "show";
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-
-
-        };
-      }
-    }//end if
-    else {
-      window.onscroll = function(){myFunction()};
-    	function myFunction() {
-
-    		if (document.body.scrollTop > 150 ||document.documentElement.scrollTop > 150){
-    			document.getElementById("followBtn2").style.visibility = "visible";
-
-    		}
-    		else {
-    			document.getElementById("followBtn2").style.visibility = "hidden";
-    		}
-    	};
-    }
     }
 
+    var profilePageVue = new Vue({
+        el: '#profile_page_main',
+        data: {
+            postsObj: [],
+            latestPostCurView: Infinity,
+            isAtViewPaginationEnd: false,
+            scrollLock: false,
+            subscribees: {},
+            profile_id: "<?=$curProfileData['profile_id']?>",
+            real_name: "<?=$curProfileData['real_name']?>",
+            isVerifiedAccount: <?=($curProfileData['isVerifiedAccount'] > 0 ? 'true' : 'false')?>,
+            curProfileIsAdmin: <?=($userinfo['isAdmin'] > 0 ? 'true' : 'false')?>,
+            isAdmin: <?=($curProfileData['isAdmin'] > 0 ? 'true' : 'false')?>,
+            has_submitted_photo: "<?=$curProfileData['has_submitted_photo']?>",
+            profile_desc: "<?=$curProfileData['profile_desc']?>",
+            email_address: "<?=$curProfileData['email_address']?>",
+            isOwnProfile: <?=($curProfileData['isOwnProfile'] > 0 ? 'true' : 'false')?>,
+            isSubscribed: <?=($curProfileData['isSubscribed'] > 0 ? 'true' : 'false')?>
+        },
+        mounted: function () {
+            var self = this;
+            if (self.isOwnProfile) {
+                $.getJSON("api/getSubscriptionList.php", function (data) {
+                    self.subscribees = data;
+                }).fail(function () {
+                    snack("Could not connect to server.", 5000);
+                });
+            }
+            $('#infoPane').on('scroll', function () {
+                //self is the vue object, this is the postsContentPanel jquery object
+                if (!(self.scrollLock || self.isAtViewPaginationEnd)) {
+                    if (this.scrollTop >= (this.scrollHeight - this.offsetHeight) - 100) {
+                        self.getPosts();
+                    }
+                }
+            });
+            this.getPosts();
+        },
+        methods: {
+            getPosts: function () {
+                this.scrollLock = true;
+                if (!this.isAtViewPaginationEnd) {
+                    var self = this;
+                    $.getJSON('api/getPosts.php', {
+                        latestPostCurView: (this.latestPostCurView === Infinity ? -1 : this.latestPostCurView),
+                        postsFromProfileID: this.profile_id
+                    }, function (data) {
+                        if (data.length < 10) {
+                            self.isAtViewPaginationEnd = true;
+                        }
+                        self.postsObj = self.postsObj.concat(data);
+                        var smallestID = Infinity;
+                        for (var i = 0; i < self.postsObj.length; i++) {
+                            if (parseInt(self.postsObj[i]['post_id']) < smallestID) {
+                                smallestID = parseInt(self.postsObj[i]['post_id']);
+                            }
+                        }
+                        if (self.latestPostCurView === smallestID) {
+                            self.isAtViewPaginationEnd = true;
+                        }
+                        self.latestPostCurView = smallestID;
+                        self.scrollLock = false;
+                    }).fail(function () {
+                        self.scrollLock = false;
+                        snack("Server Unavailable", 1200);
+                    });
+                }
+            },
+            deletePost: function (post_id) {
+                var self = this;
+                $.get('api/deletePost.php', {post_id: post_id}, function () {
+                    for (var i = 0; i < self.postsObj.length; i++) {
+                        if (self.postsObj[i]['post_id'] === post_id) {
+                            self.postsObj.splice(i, 1);
+                            break;
+                        }
+                    }
+                }).fail(function () {
+                    snack('Could not delete post.', 1500);
+                });
+            },
+            formatSeconds: function (inSeconds) {
+                function numberEnding(number) {
+                    return (number > 1) ? 's' : '';
+                }
 
+                var curTimestamp = Math.round((new Date()).getTime() / 1000);
+                var temp = Math.floor(inSeconds);
+                temp = curTimestamp - temp;
 
+                var years = Math.floor(temp / 31536000);
+                if (years) {
+                    return years + ' year' + numberEnding(years) + ' ago';
+                }
+                var days = Math.floor((temp %= 31536000) / 86400);
+                if (days) {
+                    return days + ' day' + numberEnding(days) + ' ago';
+                }
+                var hours = Math.floor((temp %= 86400) / 3600);
+                if (hours) {
+                    return hours + ' hour' + numberEnding(hours) + ' ago';
+                }
+                var minutes = Math.floor((temp %= 3600) / 60);
+                if (minutes) {
+                    return minutes + ' minute' + numberEnding(minutes) + ' ago';
+                }
+                var seconds = temp % 60;
+                if (seconds) {
+                    return seconds + ' second' + numberEnding(seconds) + ' ago';
+                }
+                return 'Just Now';
+            },
+            unsubscribe: function (profile_id) {
+                var self = this;
+                var argsObj = {
+                    subscribeToID: profile_id,
+                    action: 'unsubscribe'
+                };
+                $.get('api/subscribe.php', argsObj, function () {
+                    Vue.delete(self.subscribees, profile_id);
+                    snack('Unsubscribed.', 2500);
+                }).fail(function () {
+                    snack("Couldn't unsubscribe from user.", 2500);
+                });
+            },
+            invertColor: function (hex, bw) {
+                function padZero(str, len) {
+                    len = len || 2;
+                    var zeros = new Array(len).join('0');
+                    return (zeros + str).slice(-len);
+                };
+
+                // stolen from https://github.com/onury/invert-color MIT Licensed. -MC
+                if (hex.indexOf('#') === 0) {
+                    hex = hex.slice(1);
+                }
+                // convert 3-digit hex to 6-digits.
+                if (hex.length === 3) {
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                }
+                if (hex.length !== 6) {
+                    throw new Error('Invalid HEX color.');
+                }
+                var r = parseInt(hex.slice(0, 2), 16),
+                    g = parseInt(hex.slice(2, 4), 16),
+                    b = parseInt(hex.slice(4, 6), 16);
+                if (bw) {
+                    // http://stackoverflow.com/a/3943023/112731
+                    return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+                        ? '#000000'
+                        : '#FFFFFF';
+                }
+                // invert color components
+                r = (255 - r).toString(16);
+                g = (255 - g).toString(16);
+                b = (255 - b).toString(16);
+                // pad each with zeros and return
+                return "#" + this.padZero(r) + this.padZero(g) + this.padZero(b);
+            }
+        }
+    });
 </script>
 </body>
 </html>

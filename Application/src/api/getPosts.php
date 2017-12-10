@@ -6,6 +6,14 @@
  * Time: 3:34 PM
  */
 
+/*
+ * Returns a posts object for a certain view. Output controlled by four flags in the GET request.
+ * curViewIsCategory - Whether or not the curView variable is a category ID.
+ * curView - 0 for latest posts or 'firehose', 1 for subscription feed. If curViewIsCategory > 1, then this is a category ID instead.
+ * postsFromProfileID - If set, curView and curViewIsCategory are ignored, and only returns posts from a certain user
+ * latestPostCurView - The last post ID in the last post object returned, for pagination.
+ */
+
 require '../config.php';
 $userinfo = buboard_authenticate($mysqli, $authenticationKey);
 $userID = $userinfo['profile_id'];
@@ -19,6 +27,9 @@ if(isset($_GET['curView'])) {
     $curView = intval(mysqli_real_escape_string($mysqli, $_GET['curView']));
 } else {
     $curView = 0;
+}
+if(isset($_GET['postsFromProfileID'])){
+    $postsFromProfileID = intval(mysqli_real_escape_string($mysqli, $_GET['postsFromProfileID']));
 }
 if(isset($_GET['latestPostCurView'])) {
     $latestPostCurView = intval(mysqli_real_escape_string($mysqli, $_GET['latestPostCurView']));
@@ -51,16 +62,21 @@ FROM buboard_posts
   LEFT JOIN (SELECT followee_id, follower_id FROM profile_follows WHERE follower_id = '$userID') t1 ON post_by_user_id=followee_id
   ";
 
-//no where clause here: 'latest' feed
+//no where clause here just returns the 'latest' feed
 $hasWhereStatement = false;
-if ($curViewIsCategory == 0 && $curView == 1){
-    //'following' feed
-    $query .= " WHERE IF(ISNULL(followee_id), FALSE, TRUE) = TRUE";
+if(isset($postsFromProfileID)){
+    $query .= " WHERE profile_id = '$postsFromProfileID'";
     $hasWhereStatement = true;
-} elseif ($curViewIsCategory) {
-    //category view
-    $query .= " WHERE category_id = $curView";
-    $hasWhereStatement = true;
+} else {
+    if ($curViewIsCategory == 0 && $curView == 1) {
+        //'following' feed
+        $query .= " WHERE IF(ISNULL(followee_id), FALSE, TRUE) = TRUE";
+        $hasWhereStatement = true;
+    } elseif ($curViewIsCategory > 0) {
+        //category view
+        $query .= " WHERE category_id = $curView";
+        $hasWhereStatement = true;
+    }
 }
 
 if ($latestPostCurView != -1) {
@@ -74,7 +90,7 @@ $query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 10";
 
 $posts_queryresult = mysqli_query($mysqli, $query);
 
-//update number of unread posts to zero, since this person is online
+//update number of unread posts to zero, since this person is online, could probably be refined
 mysqli_query($mysqli, "UPDATE buboard_profiles SET followers_posts_since_feed_pull = 0");
 
 $formatted_posts = array();

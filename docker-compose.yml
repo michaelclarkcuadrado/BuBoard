@@ -4,33 +4,33 @@ services:
  buboard-php:
   build: ./Application
   volumes:
-   - ./Application/src:/var/www/html
+#   - ./Application/src:/var/www/html
+    - buboard-usercontent:/var/www/html/usercontent
   ports:
    - 80:80
   environment:
     - "HOSTNAME=localhost"
     - "smtpUser=buboard01@gmail.com"
-    - "smtpPassword=buboardpassword"
+    - "smtpPassword=REDACTED"
     - "smtpHost=smtp.gmail.com"
     - "smtpPort=587"
     - "smtpCollege=@gettysburg.edu"
   
  buboard-database:
   build: ./Database
-  ports:
-   - 3306:3306
+#  ports:
+#   - 3306:3306
   volumes:
    - buboard-db:/var/lib/mysql
 
- phpmyadmin:
-  image: phpmyadmin/phpmyadmin
-  container_name: phpmyadmin
-  environment:
-   - PMA_HOST=buboard-database
-  ports:
-   - 8080:80
-
-
+# phpmyadmin:
+#  image: phpmyadmin/phpmyadmin
+#  container_name: phpmyadmin
+#  environment:
+#   - PMA_HOST=buboard-database
+#  ports:
+#   - 8080:80
 
 volumes:
  buboard-db:
+ buboard-usercontent:

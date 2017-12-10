@@ -92,5 +92,5 @@ ALTER TABLE `post_attachments`
 
 # Add Admin account
 INSERT INTO `buboard_profiles` (`profile_id`, `real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `phone_confirmation_secret`, `phone_number`, `phone_number_is_confirmed`, `profile_desc`, `has_submitted_photo`, `followers_posts_since_feed_pull`, `power_of_two_posts_til_notification`, `isAdmin`, `isVerifiedAccount`)
-VALUES ('4', 'Buboard Administration', NOW(), '$2a$10$AJiOklxbXIf3k3dM9ia3W.mIoM14E./ucrli3c8ZfgwMDq/6dKQ4.', '000000', 'buboardadmin@buboard.com', '1', '00000', '000000000', '0',
+VALUES ('4', 'Buboard Administration', NOW(), '$2a$10$AJiOklxbXIf3k3dM9ia3W.mIoM14E./ucrli3c8ZfgwMDq/6dKQ4.', '000000', 'buboardadmin@buboard.net', '1', '00000', '000000000', '0',
              'Official Buboard Administrator.', '0', '0', '2', '1', '1');

@@ -5,7 +5,7 @@ A skeumorphic bulletin board application for announcing and following local even
 
 A senior project by CS students at Gettysburg College.
 
-Copyleft Michael Clark-Cuadrado, Jingyi 'Jannie' Liu, and Zachary Miller.
+Copyleft Michael Clark-Cuadrado, Zachary Miller, and Jannie Liu.
 
 ## Using / Hacking
 
@@ -15,10 +15,10 @@ The file `docker-compose.yml` takes configuration of things like the current pub
 ### Default Passwords
 Database / phpmyadmin passwords: root:buboard
 
-Buboard default administrator account: buboardadmin@buboard.com:buboardadmin
+Buboard default administrator account: buboardadmin@buboard.net:buboardadmin
 
 ### Database Browsing
-A PhpMyAdmin server is available locally on port 8080. Recommended to disabled in docker-compose.yml before deployment.
+A PhpMyAdmin server is available locally on port 8080 if uncommented in docker-compose. 
 
 ### Starting in Docker
 #### First Run:

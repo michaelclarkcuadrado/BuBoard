@@ -63,7 +63,7 @@ try {
     $mail->addAddress($email, 'Buboard User');     // Add a recipient
     //Content
     $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->Subject = ucfirst($firstname) . ", welcome to Buboard!";
+    $mail->Subject = "Buboard password reset";
     $mail->Body = $message;
     $mail->send();
 } catch (Exception $e) {

@@ -62,17 +62,17 @@ if (isset($_GET['id'])) {
                     Administrator Controls<br>
                     <label>
                         System Admin
-                        <input v-model="isAdmin" type="checkbox">
+                        <input v-model="isAdmin" v-on:change="updatePermissions()" type="checkbox">
                     </label>
                     <label>
                         Verified User
-                        <input v-model="isVerifiedAccount" type="checkbox">
+                        <input v-model="isVerifiedAccount" v-on:change="updatePermissions()" type="checkbox">
                     </label>
                 </div>
             </div>
         </div>
         <div id="infoPane" style="margin: 0; padding: 0" class="mdl-grid">
-            <div v-if="isOwnProfile && Object.keys(subscribees).length > 0" style="height:100%" class="mdl-cell mdl-cell--4-col">
+            <div v-if="isOwnProfile" style="height:100%" class="mdl-cell mdl-cell--4-col">
                 <h5 style="margin: 0; padding: 4px">Your Subscriptions </h5>
                 <ul style="margin-top: 0; padding-top: 0" class="mdl-list">
                     <li v-for="subscribee in subscribees" class="mdl-list__item mdl-list__item--two-line">
@@ -89,9 +89,15 @@ if (isset($_GET['id'])) {
                                 <a class="mdl-list__item-secondary-action" v-on:click="unsubscribe(subscribee.profile_id)"><i class="material-icons">person_add</i></a>
                             </span>
                     </li>
+                    <li v-if="Object.keys(subscribees).length == 0" class="mdl-list__item">
+                        <span class="mdl-list__item-primary-content">
+                            <i class="material-icons mdl-list__item_avatar">person</i>
+                            <span class="post-name-display">No Subscriptions.</span>
+                        </span>
+                    </li>
                 </ul>
             </div>
-            <div id="postsContentPanel" :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile && Object.keys('subscribees').length > 0) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
+            <div id="postsContentPanel" style="margin: 0" :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile && Object.keys('subscribees').length > 0) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
                 <div v-for="post in postsObj" v-bind:key="post" :class="['mdl-card', 'mdl-shadow--8dp', 'mdl-cell', 'mdl-cell--4-col', (isOwnProfile && Object.keys('subscribees').length > 0 ? 'mdl-cell--6-col-desktop mdl-cell--8-col-tablet' : '')]">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
                         <img class="thumbtack" src="static/image/thumbtack.png">
@@ -228,7 +234,6 @@ if (isset($_GET['id'])) {
             });
         },
         updated: function () {
-//            console.log("DOM mdl upgraded");
             componentHandler.upgradeDom();
         },
         methods: {
@@ -260,6 +265,18 @@ if (isset($_GET['id'])) {
                         snack("Server Unavailable", 1200);
                     });
                 }
+            },
+            updatePermissions: function() {
+                var argsObj = {
+                    profile_id: this.profile_id,
+                    verifiedAccount: this.isVerifiedAccount,
+                    isAdmin: this.isAdmin
+                };
+                $.get('api/changeProfilePermissions.php', argsObj, function(data){
+                    snack('Admin: Permissions Assigned');
+                }).fail(function(){
+                    snack("Couldn't contact server", 1500);
+                });
             },
             deletePost: function (post_id) {
                 var self = this;

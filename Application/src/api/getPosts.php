@@ -48,11 +48,12 @@ $query = /** @lang MySQL */
   UNIX_TIMESTAMP(post_date) AS seconds_since,
   real_name,
   has_submitted_photo,
+  photo_filename_extension,
   category_id,
   category_name,
   category_color,
   isVerifiedAccount,
-  GROUP_CONCAT(DISTINCT attachment_id SEPARATOR ',') as attachment_id,
+  GROUP_CONCAT(DISTINCT CONCAT(attachment_id, attachment_filename_extension) SEPARATOR ',') as attachment_id,
   IF(ISNULL(followee_id), FALSE, TRUE) as isSubscribed,
   IF(profile_id = $userID, TRUE, FALSE) as isOwnPost
 FROM buboard_posts
@@ -98,9 +99,6 @@ while ($post = mysqli_fetch_assoc($posts_queryresult)) {
     //turn attachment ids from csv into array
     if ($post['attachment_id'] != null) {
         $post['attachment_id'] = explode(',', $post['attachment_id']);
-        foreach( $post['attachment_id'] as &$attachment){
-            $attachment = intval($attachment);
-        }
     } else {
         $post['attachment_id'] = array();
     }

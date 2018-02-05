@@ -46,7 +46,7 @@ if (isset($_GET['id'])) {
     </div>
     <main id="profile_page_main" class="mdl--layout__content">
         <div class="card-profile mdl-shadow--2dp">
-            <img v-if="has_submitted_photo > 0" id="profile_image" :src="'/usercontent/user_avatars/' + profile_id + '.jpg'">
+            <img v-if="has_submitted_photo > 0" id="profile_image" :src="'/usercontent/user_avatars/' + profile_id + photo_filename_extension">
             <img v-else id="profile_image" src="/static/image/portrait.jpg">
             <div class="content" id="content">
                 <h5><i v-if="isVerifiedAccount"
@@ -79,7 +79,7 @@ if (isset($_GET['id'])) {
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="subscribee.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + subscribee.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscribee.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + subscribee.profile_id"
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscribee.profile_id + subscribee.photo_filename_extension" v-on:click="window.location='profile.php?id=' + subscribee.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
                                 <span v-on:click="window.location='profile.php?id=' + subscribee.profile_id" class="post-name-display"><i v-if="subscribee.isVerifiedAccount > 0"
                                                                                                                                           class="material-icons verified_user">verified_user</i>{{subscribee.real_name}}</span>
@@ -106,7 +106,7 @@ if (isset($_GET['id'])) {
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + post.photo_filename_extension" v-on:click="window.location='profile.php?id=' + post.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
                                 <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display"><i v-if="post.isVerifiedAccount > 0"
                                                                                                                                     class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
@@ -126,8 +126,8 @@ if (isset($_GET['id'])) {
                             <br>
                             Attachments:
                             <div>
-                                <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
-                                            class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
+                                <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment"><img
+                                            class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment"></a>
                             </div>
                         </div>
                     </div>
@@ -184,6 +184,7 @@ if (isset($_GET['id'])) {
             curProfileIsAdmin: <?=($userinfo['isAdmin'] > 0 ? 'true' : 'false') //whether or not this current user is an admin?>,
             isAdmin: false,
             has_submitted_photo: "",
+            photo_filename_extension: "",
             profile_desc: "",
             email_address: "",
             isOwnProfile: false,
@@ -198,10 +199,18 @@ if (isset($_GET['id'])) {
                 self.isAdmin = data.isAdmin;
                 self.isVerifiedAccount = data.isVerifiedAccount;
                 self.has_submitted_photo = data.has_submitted_photo;
+                self.photo_filename_extension = data.photo_filename_extension;
                 self.profile_desc = data.profile_desc;
                 self.email_address = data.email_address;
                 self.isSubscribed = data.isSubscribed;
                 self.isOwnProfile = data.isOwnProfile;
+                if (self.isOwnProfile) {
+                    $.getJSON("api/getSubscriptionList.php", function (data) {
+                        self.subscribees = data;
+                    }).fail(function () {
+                        snack("Could not connect to server.", 5000);
+                    });
+                }
                 self.getPosts();
             }).fail(function(data){
                 //set timeout to allow snack to be available.
@@ -209,13 +218,6 @@ if (isset($_GET['id'])) {
                     snack(data.responseText, 9001);
                 }, 150);
             });
-            if (self.isOwnProfile) {
-                $.getJSON("api/getSubscriptionList.php", function (data) {
-                    self.subscribees = data;
-                }).fail(function () {
-                    snack("Could not connect to server.", 5000);
-                });
-            }
             $('#infoPane').on('scroll', function () {
                 //self is the vue object, this is the postsContentPanel jquery object
                 if (!(self.scrollLock || self.isAtViewPaginationEnd)) {
@@ -224,6 +226,10 @@ if (isset($_GET['id'])) {
                     }
                 }
             });
+        },
+        updated: function () {
+//            console.log("DOM mdl upgraded");
+            componentHandler.upgradeDom();
         },
         methods: {
             getPosts: function () {

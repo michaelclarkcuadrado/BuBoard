@@ -26,9 +26,9 @@ if(isset($_GET['post_id'])){
     //delete it
     if($authorized){
         //delete attachment files
-        $attachments = mysqli_query($mysqli, "SELECT attachment_id FROM post_attachments WHERE belongs_to_post_id = '$post_id'");
+        $attachments = mysqli_query($mysqli, "SELECT CONCAT(attachment_id, attachment_filename_extension) as filename FROM post_attachments WHERE belongs_to_post_id = '$post_id'");
         while($attachment = mysqli_fetch_assoc($attachments)){
-            $stat = unlink('../usercontent/post_attachments/'.$attachment['attachment_id'].'.jpg');
+            $stat = unlink('../usercontent/post_attachments/'.$attachment['filename']);
             if(!$stat){
                 APIFail('Cannot delete attachments');
             }

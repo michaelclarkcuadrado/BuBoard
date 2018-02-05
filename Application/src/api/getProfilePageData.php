@@ -19,6 +19,7 @@ $curProfileData = mysqli_fetch_assoc(mysqli_query($mysqli, "
   isAdmin,
   isVerifiedAccount,
   has_submitted_photo,
+  photo_filename_extension AS photo_filename_extension,
   profile_desc,
   email_address,
   (follower_id IS NOT NULL) as isSubscribed

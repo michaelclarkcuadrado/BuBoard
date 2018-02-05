@@ -6,7 +6,7 @@ $message = null;
 
 if (isset($_GET['message'])) {
     $messagePresent = true;
-    $message = $_GET['message'];
+    $message = filter_var($_GET['message'], FILTER_SANITIZE_STRING);
 }
 ?>
 <html>

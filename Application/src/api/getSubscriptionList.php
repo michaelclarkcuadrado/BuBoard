@@ -12,6 +12,7 @@ $userSubscribedTo = mysqli_query($mysqli, "SELECT
   profile_id,
   real_name,
   isVerifiedAccount,
+  photo_filename_extension,
   has_submitted_photo
 FROM buboard_profiles
   JOIN profile_follows follow ON buboard_profiles.profile_id = follow.followee_id

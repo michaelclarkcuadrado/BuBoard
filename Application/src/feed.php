@@ -84,7 +84,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="post.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + post.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + '.jpg'" v-on:click="window.location='profile.php?id=' + post.profile_id"
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + post.profile_id + post.photo_filename_extension" v-on:click="window.location='profile.php?id=' + post.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
                                 <span v-on:click="window.location='profile.php?id=' + post.profile_id" class="post-name-display"><i v-if="post.isVerifiedAccount > 0"
                                                                                                                                     class="material-icons verified_user">verified_user</i>{{post.real_name}}</span>
@@ -104,8 +104,8 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                                 <br>
                                 Attachments:
                                 <div>
-                                    <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment + '.jpg'"><img
-                                                class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment + '.jpg'"></a>
+                                    <a v-for="attachment in post.attachment_id" target="_blank" :href="'usercontent/post_attachments/' + attachment"><img
+                                                class="mdl-cell mdl-cell--2-col mdl-cell--1-col-phone" v-bind:src="'usercontent/post_attachments/' + attachment"></a>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     <label class="mdl-textfield__label mdl-color-text--blue-grey-600" for="post">Tell the world...</label>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--4-col-phone">
-                    <label class="mdl-color-text--blue-grey-600">Add an attachment. (Optional, .jpg only)</label><br>
+                    <label class="mdl-color-text--blue-grey-600">Add an attachment. (Optional, must be an image.)</label><br>
                     <input class="mdl-button" type="file" name="fileToUpload">
                 </div>
                 <div style="width: 100%" class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">

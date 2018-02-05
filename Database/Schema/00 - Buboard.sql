@@ -33,6 +33,7 @@ CREATE TABLE `buboard-data`.`buboard_profiles` (
   `email_address`                       VARCHAR(320) NOT NULL,
   `email_is_confirmed`                  TINYINT(1)   NOT NULL,
   `phone_confirmation_secret`           INT(11)      NOT NULL DEFAULT 0,
+  `photo_filename_extension`            VARCHAR(6)   NOT NULL DEFAULT '.jpg',
   `phone_number`                        VARCHAR(15)  NOT NULL DEFAULT 0,
   `phone_number_is_confirmed`           TINYINT(1)   NOT NULL DEFAULT 0,
   `profile_desc`                        VARCHAR(255) NOT NULL,
@@ -54,9 +55,9 @@ CREATE TABLE `buboard-data`.`profile_follows` (
 );
 
 CREATE TABLE `buboard-data`.`post_attachments` (
-  `attachment_id`       INT     NOT NULL AUTO_INCREMENT,
-  `belongs_to_post_id`  INT     NOT NULL,
-  `post_attachment_num` TINYINT NOT NULL,
+  `attachment_id`                 INT        NOT NULL AUTO_INCREMENT,
+  `belongs_to_post_id`            INT        NOT NULL,
+  `attachment_filename_extension` VARCHAR(6) NOT NULL DEFAULT '.jpg',
   PRIMARY KEY (`attachment_id`)
 );
 

@@ -9,9 +9,9 @@ require 'PHPMailer/src/Exception.php';
 
 require '../config.php';
 
-$firstname = mysqli_real_escape_string($mysqli, $_POST['firstname']);
-$lastname = mysqli_real_escape_string($mysqli, $_POST['lastname']);
-$email = mysqli_real_escape_string($mysqli, $_POST['email']);
+$firstname = mysqli_real_escape_string($mysqli, ucfirst($_POST['firstname']));
+$lastname = mysqli_real_escape_string($mysqli, ucfirst($_POST['lastname']));
+$email = mysqli_real_escape_string($mysqli, filter_var($_POST['email'], FILTER_SANITIZE_EMAIL));
 $description = mysqli_real_escape_string($mysqli, $_POST['description']);
 $password1 = mysqli_real_escape_string($mysqli, $_POST['password1']);
 $password2 = mysqli_real_escape_string($mysqli, $_POST['password2']);
@@ -28,80 +28,58 @@ $confirmcode = rand();
 $check = true;
 $message = "";
 
-if ($firstname == "" && $lastname==""){
+if ($firstname == "" && $lastname == "") {
     $check = false;
     $message = "You must enter a first and last name";
-}
-
-else if ($firstname == ""){
+} else if ($firstname == "") {
     $check = false;
     $message = "You must enter a first name";
-}
-
-else if ($lastname == ""){
+} else if ($lastname == "") {
     $check = false;
     $message = "You must enter a last name";
-}
-
-else if ($email == ""){
+} else if ($email == "") {
     $check = false;
-    $message = "You must enter an email";
-}
-
-else if (!strpos($email, $college)){
+    $message = "You must enter a valid email";
+} else if (!strpos($email, $college)) {
     $check = false;
-    $message = 'You must enter an ' . $college .' email';
-}
-
-else if ($password1 == "" || $password2 == ""){
+    $message = 'You must enter an ' . $college . ' email';
+} else if ($password1 == "" || $password2 == "") {
     $check = false;
     $message = "You must have a password";
 }
 
-else if ($password1 != $password2){
-    $check = false;
-    $message = "You passwords do not match";
-}
-
-
-
-if($password1 === $password2){
+if ($password1 === $password2) {
     $hash = password_hash($password1, PASSWORD_DEFAULT);
 } else {
     $check = false;
+    $message = "Your passwords do not match";
 }
 
-if (!$check){
+if (!$check) {
     header("location: ../signup.php?message=$message");
-}
-
-
-
-// Data is now validated
-else {
-
+} else { // Data is now validated
     $has_submitted_photo = 0;
-    if (!empty($_FILES) && isset($_FILES['fileToUpload'])){
-        $has_submitted_photo = 1;
+    $image_extension = '.jpg';
+    if (!empty($_FILES) && isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['size'] > 0) {
+        $imagetype = exif_imagetype($_FILES['fileToUpload']['tmp_name']);
+        if($imagetype !== false){
+            $has_submitted_photo = 1;
+            $image_extension = image_type_to_extension($imagetype);
+        }
     }
 
     $posts_queryresult = mysqli_query($mysqli, "
-      INSERT INTO `buboard_profiles` (`real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `profile_desc`, `has_submitted_photo`)
-      VALUES ('$firstname $lastname', NOW(), '$hash', '$confirmcode', '$email', 0, '$description', '$has_submitted_photo');
+      INSERT INTO `buboard_profiles` (`real_name`, `date_signup`, `password_hash`, `email_confirmation_secret`, `email_address`, `email_is_confirmed`, `profile_desc`, `has_submitted_photo`, `photo_filename_extension`)
+      VALUES ('$firstname $lastname', NOW(), '$hash', '$confirmcode', '$email', 0, '$description', '$has_submitted_photo', '$image_extension');
     ");
-
     $profile_id = mysqli_insert_id($mysqli);
 
-
-    if ($posts_queryresult){
+    if ($posts_queryresult) {
         $sql_check = true;
-    }
-    else{
+    } else {
         kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
         header("location: ../signup.php?message=Something went wrong");
     }
-
-
 
     //auto-follow all verified accounts
     $list_verified_accts = mysqli_query($mysqli, "SELECT profile_id FROM buboard_profiles WHERE isVerifiedAccount > 0");
@@ -111,42 +89,36 @@ else {
         mysqli_stmt_execute($stmt);
     }
 
+    //this whole block needs a rewrite. Where do the errors even go?
+    if ($has_submitted_photo) {
+        if ($_FILES['fileToUpload']["error"] == UPLOAD_ERR_OK) {
+            $target = "../usercontent/user_avatars/";
+            $target = $target . $profile_id . $image_extension;
 
+            $uploadOk = 1;
 
-    if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
-        switch ($_FILES['fileToUpload']["error"]) {
-            case UPLOAD_ERR_OK:
-                $target = "../usercontent/user_avatars/";
-                $target = $target . basename($_FILES['fileToUpload']['name']);
+            if (file_exists('$target_file')) {
+                echo "Sorry, file already exists.";
+                $uploadOk = 0;
+            }
 
-                $uploadOk = 1;
+            if ($uploadOk == 1) {
+                $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
 
-                if (file_exists('$target_file')) {
-                    echo "Sorry, file already exists.";
-                    $uploadOk = 0;
+                if ($isUploaded) {
+                    $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
+                    $pic_check = true;
+                } else {
+                    $status = "Sorry, there was a problem uploading your file.";
+                    kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
+                    header("location: ../signup.php?message=$status");
                 }
-
-                $file_parts = pathinfo($target);
-
-                if ($file_parts['extension'] != 'jpg') {
-                    $uploadOk = 0;
-                }
-
-                if ($uploadOk == 1) {
-                    $isUploaded = move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target);
-
-                    if ($isUploaded) {
-                        $status = "The file " . basename($_FILES['fileToUpload']['name']) . " has been uploaded";
-                        $pic_check = true;
-
-                    } else {
-                        $status = "Sorry, there was a problem uploading your file.";
-                        kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
-                        header("location: ../signup.php?message=$status");
-                    }
-
-                    rename("$target", "../usercontent/user_avatars/$profile_id.jpg");
-                }
+            } else {
+                kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
+                header("location: ../signup.php?message=$status");
+            }
+        } else {
+            kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
         }
     }
 
@@ -190,32 +162,27 @@ function kill_signup($mysqli, $sql_check, $pic_check, $profile_id){
     $target = "/usercontent/user_avatars/";
     // if $sql_check = true: then the data was added to the database, but an error was encountered later
     // if $pic_check = true: then the picture was added to the database, but an error was encountered later
-
     // if both false: nothing need to be done, as no data was added before a failure
 
     // if $sql_check = true and $pic_check = false: we have to remove the most recent addition to the profile list
-    if ($sql_check == true && $pic_check == false){
+    if ($sql_check == true && $pic_check == false) {
+        $posts_queryresult = mysqli_query($mysqli, "
+            DELETE
+            FROM buboard_profiles
+            WHERE profile_id = '$profile_id';
+        ");
+    } // if $sql_check = false and $pic_check = true: we need to remove the profile pic with the highest number
+    else if ($sql_check == false && $pic_check == true) {
+    } // if both true: remove most recent profile and most recent profile pic
+    else if ($sql_check == true && $pic_check == true) {
         $posts_queryresult = mysqli_query($mysqli, "
             DELETE
             FROM buboard_profiles
             WHERE profile_id = '$profile_id';
         ");
     }
-    // if $sql_check = false and $pic_check = true: we need to remove the profile pic with the highest number
-    else if ($sql_check == false && $pic_check == true){
-        unlink('$target$profile_id');
-    }
-    // if both true: remove most recent profile and most recent profile pic
-    else if ($sql_check == true && $pic_check == true){
-        $posts_queryresult = mysqli_query($mysqli, "
-            DELETE
-            FROM buboard_profiles
-            WHERE profile_id = '$profile_id';
-        ");
-        unlink('$target$profile_id');
-    }
-
 }
+
 ?>
 
 

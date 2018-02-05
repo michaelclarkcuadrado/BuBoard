@@ -7,22 +7,6 @@ if (isset($_GET['id'])) {
 } else {
     $profile_id = $userinfo['profile_id'];
 }
-
-$curProfileData = mysqli_fetch_assoc(mysqli_query($mysqli, "
-  SELECT
-  profile_id,
-  real_name,
-  isAdmin,
-  isVerifiedAccount,
-  has_submitted_photo,
-  profile_desc,
-  email_address,
-  (follower_id IS NOT NULL) as isSubscribed
-FROM buboard_profiles
-  LEFT JOIN profile_follows follow ON buboard_profiles.profile_id =follow.followee_id AND follower_id = " . $userinfo['profile_id'] . "
-WHERE profile_id = $profile_id
-"));
-$curProfileData['isOwnProfile'] = ($curProfileData['profile_id'] === $userinfo['profile_id'] ? 1 : 0);
 ?>
 
 <!doctype html>
@@ -71,6 +55,7 @@ $curProfileData['isOwnProfile'] = ($curProfileData['profile_id'] === $userinfo['
                 </h5>
                 <a style="background-color: rgba(255,255,255,0.2); padding: 4px; border-radius: 5px; word-wrap: break-word" :href="'mailto:' + email_address">Email Address: {{email_address}}</a>
                 <p>{{ profile_desc }}</p>
+                <p v-if="isSubscribed > 0"><b>This user is subscribed to you.</b></p>
             </div>
             <div class="hazard_panel" v-if="curProfileIsAdmin">
                 <div style="background-color: seagreen; margin: 5px; padding: 5px;">
@@ -193,19 +178,37 @@ $curProfileData['isOwnProfile'] = ($curProfileData['profile_id'] === $userinfo['
             isAtViewPaginationEnd: false,
             scrollLock: false,
             subscribees: {},
-            profile_id: "<?=$curProfileData['profile_id']?>",
-            real_name: "<?=$curProfileData['real_name']?>",
-            isVerifiedAccount: <?=($curProfileData['isVerifiedAccount'] > 0 ? 'true' : 'false')?>,
-            curProfileIsAdmin: <?=($userinfo['isAdmin'] > 0 ? 'true' : 'false')?>,
-            isAdmin: <?=($curProfileData['isAdmin'] > 0 ? 'true' : 'false')?>,
-            has_submitted_photo: "<?=$curProfileData['has_submitted_photo']?>",
-            profile_desc: "<?=$curProfileData['profile_desc']?>",
-            email_address: "<?=$curProfileData['email_address']?>",
-            isOwnProfile: <?=($curProfileData['isOwnProfile'] > 0 ? 'true' : 'false')?>,
-            isSubscribed: <?=($curProfileData['isSubscribed'] > 0 ? 'true' : 'false')?>
+            profile_id: 0,
+            real_name: "",
+            isVerifiedAccount: false,
+            curProfileIsAdmin: <?=($userinfo['isAdmin'] > 0 ? 'true' : 'false') //whether or not this current user is an admin?>,
+            isAdmin: false,
+            has_submitted_photo: "",
+            profile_desc: "",
+            email_address: "",
+            isOwnProfile: false,
+            isSubscribed: false
         },
         mounted: function () {
             var self = this;
+            //todo merge subscription list into single API call
+            $.getJSON('api/getProfilePageData.php', {id: <?=$profile_id?>}, function(data) {
+                self.profile_id = data.profile_id;
+                self.real_name = data.real_name;
+                self.isAdmin = data.isAdmin;
+                self.isVerifiedAccount = data.isVerifiedAccount;
+                self.has_submitted_photo = data.has_submitted_photo;
+                self.profile_desc = data.profile_desc;
+                self.email_address = data.email_address;
+                self.isSubscribed = data.isSubscribed;
+                self.isOwnProfile = data.isOwnProfile;
+                self.getPosts();
+            }).fail(function(data){
+                //set timeout to allow snack to be available.
+                setTimeout(function(){
+                    snack(data.responseText, 9001);
+                }, 150);
+            });
             if (self.isOwnProfile) {
                 $.getJSON("api/getSubscriptionList.php", function (data) {
                     self.subscribees = data;
@@ -221,7 +224,6 @@ $curProfileData['isOwnProfile'] = ($curProfileData['profile_id'] === $userinfo['
                     }
                 }
             });
-            this.getPosts();
         },
         methods: {
             getPosts: function () {

@@ -9,16 +9,13 @@
 require '../config.php';
 $email = mysqli_real_escape_string($mysqli, $_GET['email']);
 $confirm_code = mysqli_real_escape_string($mysqli, $_GET['confirmcode']);
-$password = mysqli_real_escape_string($mysqli, $_GET['password']);
-
-
+$password = password_hash($_GET['password'], PASSWORD_DEFAULT);
 
 $result = mysqli_query($mysqli, "
       SELECT email_confirmation_secret 
       FROM buboard_profiles 
       WHERE email_address = '$email';
        ");
-
 
 $row = mysqli_fetch_assoc($result);
 $secret = $row['email_confirmation_secret'];

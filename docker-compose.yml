@@ -1,22 +1,21 @@
-version: '3.0'
+version: '2.1'
 
 services:
  buboard-php:
   build: ./Application
+  restart: always
   volumes:
-#   - ./Application/src:/var/www/html
+    - ./Application/src:/var/www/html
     - buboard-usercontent:/var/www/html/usercontent
-  ports:
-   - 80:80
-  environment:
-    - "HOSTNAME=localhost"
-    - "smtpUser=buboard01@gmail.com"
-    - "smtpPassword=REDACTED"
-    - "smtpHost=smtp.gmail.com"
-    - "smtpPort=587"
-    - "smtpCollege=@gettysburg.edu"
-  
+  #comment when running in SSL mode
+#  ports:
+#   - 80:80
+  env_file:
+    - deployment.env
+    - hostname.env
+
  buboard-database:
+  restart: always
   build: ./Database
 #  ports:
 #   - 3306:3306
@@ -31,6 +30,34 @@ services:
 #  ports:
 #   - 8080:80
 
+# working ssl implementation. Comment for development env
+ nginx-proxy:
+  restart: always
+  image: jwilder/nginx-proxy
+  ports:
+   - "80:80"
+   - "443:443"
+  volumes:
+   - "nginx-vhost:/etc/nginx/vhost.d"
+   - "nginx-html:/usr/share/nginx/html"
+   - "nginx-certs:/etc/nginx/certs"
+   - "/var/run/docker.sock:/tmp/docker.sock:ro"
+  env_file:
+   - deployment.env
+
+ letsencrypt-nginx-proxy-companion:
+   image: jrcs/letsencrypt-nginx-proxy-companion
+   restart: always
+   volumes_from:
+     - nginx-proxy
+   volumes:
+     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+   env_file:
+     - deployment.env
+
 volumes:
  buboard-db:
  buboard-usercontent:
+ nginx-vhost:
+ nginx-html:
+ nginx-certs:

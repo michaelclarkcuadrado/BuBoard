@@ -28,7 +28,7 @@ SELECT
 FROM
   buboard_profiles
   LEFT JOIN profile_follows ON buboard_profiles.profile_id = profile_follows.followee_id
-WHERE (follower_id IS NULL OR follower_id != $id) AND profile_id != $id AND email_is_confirmed >= 1 AND (real_name COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%' 
+WHERE profile_id NOT IN (SELECT followee_id FROM profile_follows WHERE follower_id = $id) AND profile_id != $id AND email_is_confirmed >= 1 AND (real_name COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%' 
                                                           OR email_address LIKE '%" . $queryString . "%'
                                                           OR profile_desc COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%')
 GROUP BY profile_id

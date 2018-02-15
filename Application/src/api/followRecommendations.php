@@ -22,7 +22,7 @@ SELECT
 FROM
   buboard_profiles
   LEFT JOIN profile_follows follow ON buboard_profiles.profile_id = follow.followee_id
-WHERE (follower_id IS NULL OR follower_id != $id) AND profile_id != $id AND email_is_confirmed >= 1
+WHERE profile_id NOT IN (SELECT followee_id FROM profile_follows WHERE follower_id = $id) AND profile_id != $id AND email_is_confirmed >= 1
 GROUP BY profile_id
 ORDER BY followers DESC, RAND()
 LIMIT 6

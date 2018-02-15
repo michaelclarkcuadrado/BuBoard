@@ -13,7 +13,7 @@ $recs_result = mysqli_query($mysqli, "
 SELECT
   profile_id,
   real_name,
-  CONCAT(LEFT(profile_desc, 60), '...') as profile_desc,  isVerifiedAccount,
+  CONCAT(LEFT(profile_desc, 25), '...') as profile_desc,  isVerifiedAccount,
   has_submitted_photo,
   photo_filename_extension,
   COUNT(follower_id) AS followers,

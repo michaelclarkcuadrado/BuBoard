@@ -53,7 +53,7 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
             <div id="searchResultsList" v-if="searchQuery != '' || Object.keys(searchResults).length != 0">
                 <h5 class="mdl-typography--text-center">Results for {{searchQuery}}: {{Number(Object.keys(searchResults).length).toLocaleString()}} results</h5>
                 <ul style="display:flex; flex-wrap: wrap; justify-content: space-evenly; max-width: 1400px; margin-left: auto; margin-right: auto;" class="mdl-list">
-                    <li v-for="(profile, profile_index) in searchResults" style=""  class="mdl-list__item mdl-list__item--two-line profileSearchResult">
+                    <li v-for="(profile, profile_index) in searchResults" style="flex-grow: 1"  class="mdl-list__item mdl-list__item--two-line profileSearchResult">
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="profile.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + profile.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
@@ -77,7 +77,7 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
             <div id="initialRecommendationsContainer" v-else>
                 <h5 class="mdl-typography--text-center">Popular on BuBoard</h5>
                 <ul style="display:flex; flex-wrap: wrap; justify-content: space-evenly; max-width: 1400px; margin-left: auto; margin-right: auto;" class="mdl-list">
-                    <li v-for="(profile, profile_index) in initialRecommendations" style=""  class="mdl-list__item mdl-list__item--two-line profileSearchResult">
+                    <li v-for="(profile, profile_index) in initialRecommendations" style="flex-grow: 1"  class="mdl-list__item mdl-list__item--two-line profileSearchResult">
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="profile.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + profile.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>

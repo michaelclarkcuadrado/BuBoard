@@ -31,6 +31,7 @@ function buboard_login($mysqli, $authenticationKey) {
             setcookie('token', crypt($username, $authenticationKey));
             die("<script>window.location = '/feed.php'</script>");
         } else {
+            //incorrect password
             return array('messagePresent' => true, 'message' => "Incorrect password or username, try again.");
         }
     } else {

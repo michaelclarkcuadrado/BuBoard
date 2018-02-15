@@ -44,10 +44,11 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             </div>
         </header>
         <div class="mdl-layout__drawer">
-            <span class="mdl-layout-title"><?= $userinfo['real_name'] ?></span>
+            <span class="mdl-layout-title">BuBoard</span>
             <nav class="mdl-navigation mdl-color--blue-light_blue-800">
                 <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
-                <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
+                <a class="mdl-navigation__link" href="/profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">account_box</i> My Profile</a>
+                <a class="mdl-navigation__link" href="/profilesearch.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">search</i> Find Members</a>
                 <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
             </nav>
         </div>

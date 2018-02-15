@@ -23,7 +23,7 @@
     display: inline-block;
     width: 100%;
     color: white;
-    background-color: seagreen;
+    background-color: cadetblue;
 }
 
 .mdl-card__media {
@@ -31,8 +31,8 @@
 }
 
 #profile_image {
-    width: 150px;
-    height: 150px;
+    max-width: 150px;
+    max-height: 150px;
     border-radius:50px;
     padding: 16px;
 	margin: auto;

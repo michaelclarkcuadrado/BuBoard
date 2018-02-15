@@ -123,7 +123,7 @@ if (!$check) {
     }
 
 
-    $confirmLink = "http://" . getenv('HOSTNAME') . "/api/emailConfirm.php?email=$email&confirmcode=$confirmcode";
+    $confirmLink = "https://" . getenv('HOSTNAME') . "/api/emailConfirm.php?email=$email&confirmcode=$confirmcode";
     $message =
         "   
     <html>

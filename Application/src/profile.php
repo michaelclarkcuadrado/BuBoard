@@ -16,7 +16,7 @@ if (isset($_GET['id'])) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/profile.css"/>
-    <link rel="stylesheet" href="static/css/introjs.css"/>
+<!--    <link rel="stylesheet" href="static/css/introjs.css"/>-->
     <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -37,10 +37,11 @@ if (isset($_GET['id'])) {
     </header>
 
     <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title"><?= $userinfo['real_name'] ?></span>
+        <span class="mdl-layout-title">BuBoard</span>
         <nav class="mdl-navigation mdl-color--blue-light_blue-800">
             <a class="mdl-navigation__link" href="/feed.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i> Home</a>
-            <a class="mdl-navigation__link" href="profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i> My Profile</a>
+            <a class="mdl-navigation__link" href="/profile.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">account_box</i> My Profile</a>
+            <a class="mdl-navigation__link" href="/profilesearch.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">search</i> Find Members</a>
             <a class="mdl-navigation__link" onclick="logout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">exit_to_app</i> Logout</a>
         </nav>
     </div>
@@ -53,12 +54,12 @@ if (isset($_GET['id'])) {
                        class="material-icons verified_user">verified_user</i>
                     {{ real_name }}
                 </h5>
-                <a style="background-color: rgba(255,255,255,0.2); padding: 4px; border-radius: 5px; word-wrap: break-word" :href="'mailto:' + email_address">Email Address: {{email_address}}</a>
+                <a style="background-color: rgba(255,255,255,0.2); color: #0000EE; padding: 4px; border-radius: 5px; word-wrap: break-word" :href="'mailto:' + email_address">Email Address: {{email_address}}</a>
                 <p>{{ profile_desc }}</p>
                 <p v-if="isSubscribed > 0"><b>This user is subscribed to you.</b></p>
             </div>
             <div class="hazard_panel" v-if="curProfileIsAdmin">
-                <div style="background-color: seagreen; margin: 5px; padding: 5px;">
+                <div style="background-color: cadetblue; margin: 5px; padding: 5px;">
                     Administrator Controls<br>
                     <label>
                         System Admin
@@ -71,9 +72,9 @@ if (isset($_GET['id'])) {
                 </div>
             </div>
         </div>
-        <div id="infoPane" style="margin: 0; padding: 0" class="mdl-grid">
+        <div id="infoPane" class="mdl-grid mdl-grid--no-spacing">
             <div v-if="isOwnProfile" style="height:100%" class="mdl-cell mdl-cell--4-col">
-                <h5 style="margin: 0; padding: 4px">Your Subscriptions </h5>
+                <h5 style="margin: 0; padding: 8px">Your Subscriptions </h5>
                 <ul style="margin-top: 0; padding-top: 0" class="mdl-list">
                     <li v-for="subscribee in subscribees" class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
@@ -92,12 +93,15 @@ if (isset($_GET['id'])) {
                     <li v-if="Object.keys(subscribees).length == 0" class="mdl-list__item">
                         <span class="mdl-list__item-primary-content">
                             <i class="material-icons mdl-list__item_avatar">person</i>
-                            <span class="post-name-display">No Subscriptions.</span>
+                            <span class="post-name-display">
+                                No Subscriptions. <br>
+                                <a href="profilesearch.php">Discover who's on BuBoard</a>
+                            </span>
                         </span>
                     </li>
                 </ul>
             </div>
-            <div id="postsContentPanel" style="margin: 0" :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile && Object.keys('subscribees').length > 0) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
+            <div id="postsContentPanel" style="margin: 0" :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
                 <div v-for="post in postsObj" v-bind:key="post" :class="['mdl-card', 'mdl-shadow--8dp', 'mdl-cell', 'mdl-cell--4-col', (isOwnProfile && Object.keys('subscribees').length > 0 ? 'mdl-cell--6-col-desktop mdl-cell--8-col-tablet' : '')]">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
                         <img class="thumbtack" src="static/image/thumbtack.png">

@@ -19,7 +19,7 @@ SELECT
   profile_id,
   real_name,
   email_address,
-  profile_desc,
+  CONCAT(LEFT(profile_desc, 60), '...') as profile_desc,
   isVerifiedAccount,
   has_submitted_photo,
   photo_filename_extension,

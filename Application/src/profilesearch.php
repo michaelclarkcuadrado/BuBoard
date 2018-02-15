@@ -66,7 +66,7 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
                                 </span>
                             </span>
                         <span v-if="profile.isSubscribed == 0" class="mdl-list__item-secondary-content">
-                            <a class="mdl-list__item-secondary-action" v-on:click="subscribe(profile.profile_id, profile_index, false)"><button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">Subscribe</button></a>
+                            <a class="mdl-list__item-secondary-action" v-on:click="subscribe(profile.profile_id, profile_index, true)"><button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">Subscribe</button></a>
                         </span>
                         <span v-else class="mdl-list__item-secondary-content">
                             <a class="mdl-list__item-secondary-action"><button disabled class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">Subscribed</button></a>
@@ -77,7 +77,7 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
             <div id="initialRecommendationsContainer" v-else>
                 <h5 class="mdl-typography--text-center">Popular on BuBoard</h5>
                 <ul style="display:flex; flex-wrap: wrap; justify-content: space-evenly; max-width: 1400px; margin-left: auto; margin-right: auto;" class="mdl-list">
-                    <li v-for="(profile, profile_index) in initialRecommendations" style="flex-grow: 1 400px"  class="mdl-list__item mdl-list__item--two-line profileSearchResult">
+                    <li v-for="(profile, profile_index) in initialRecommendations" style="flex: 1 400px"  class="mdl-list__item mdl-list__item--two-line profileSearchResult">
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="profile.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + profile.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
@@ -156,8 +156,17 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
             subscribe: function(profile_id, profile_index, isSearchResult){
                 var self = this;
                 $.get('api/subscribe.php', {subscribeToID: profile_id}, function() {
-                    Vue.delete(self.initialRecommendations, profile_index);
+                    if(isSearchResult){
+                        self.searchResults[profile_index].isSubscribed = 1;
+                        $.getJSON('/api/followRecommendations.php', function(data){
+                            self.initialRecommendations = data;
+                        })
+                    } else {
+                        Vue.delete(self.initialRecommendations, profile_index);
+                    }
                    snack("Subscribed!", 1500);
+                }).fail(function() {
+                    snack("Couldn't connect to server.", 1500);
                 });
             }
         }

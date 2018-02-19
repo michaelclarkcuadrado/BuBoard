@@ -9,7 +9,7 @@ require_once '../config.php';
 $userdata = buboard_authenticate($mysqli, $authenticationKey);
 $id = $userdata['profile_id'];
 $queryString = "";
-if(isset($_GET['q']) && $_GET['q'] !== ''){
+if (isset($_GET['q']) && $_GET['q'] !== '') {
     $queryString = mysqli_real_escape_string($mysqli, $_GET['q']);
 } else {
     APIFail("Must send query string");
@@ -19,18 +19,18 @@ SELECT
   profile_id,
   real_name,
   email_address,
-  CONCAT(LEFT(profile_desc, 25), '...') as profile_desc,
+  CONCAT(LEFT(profile_desc, 25), '...') AS profile_desc,
   isVerifiedAccount,
   has_submitted_photo,
   photo_filename_extension,
-  COUNT(follower_id) as followers,
-  0 as isSubscribed
+  COUNT(follower_id)                    AS followers,
+  SUM(CASE WHEN follower_id = $id THEN 1 ELSE 0 END)  AS isSubscribed
 FROM
   buboard_profiles
   LEFT JOIN profile_follows ON buboard_profiles.profile_id = profile_follows.followee_id
-WHERE profile_id NOT IN (SELECT followee_id FROM profile_follows WHERE follower_id = $id) AND profile_id != $id AND email_is_confirmed >= 1 AND (real_name COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%' 
-                                                          OR email_address LIKE '%" . $queryString . "%'
-                                                          OR profile_desc COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%')
+WHERE profile_id != $id AND email_is_confirmed >= 1 AND (real_name COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%'
+                                                                                                         OR email_address LIKE '%" . $queryString . "%'
+                                                                                                         OR profile_desc COLLATE UTF8_GENERAL_CI LIKE '%" . $queryString . "%')
 GROUP BY profile_id
 ORDER BY RAND()
 LIMIT 15

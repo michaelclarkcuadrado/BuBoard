@@ -9,6 +9,18 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
 <html style="overflow: hidden">
 <head>
     <title>BuBoard Feed</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<?=getenv("ANALYTICS_ID")?>');
+        gtag('set', {'user_id': '<?=$userinfo['profile_id']?>'});
+    </script>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/feed.css"/>
@@ -205,6 +217,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
 <script src="static/js/jquery.touchSwipe.min.js"></script>
 <script>
     function logout() {
+        gtag('event', 'logout');
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.replace('/');
@@ -219,6 +232,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     }
 
     function showNewPostModal() {
+        gtag('event', 'open_new_post_card');
         el = document.getElementById("overlayModal");
         el.style.visibility = (el.style.visibility === "visible") ? "hidden" : "visible";
         $('#postsContentPanel').toggleClass('blurred');
@@ -234,6 +248,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             contentType: false,
             processData: false,
             success: function (data) {
+                gtag('event', 'make_new_post');
                 $('#postingError').html('');
                 $('#newPostForm')[0].reset();
                 //reset mdl state. Bug in MDL
@@ -303,7 +318,6 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             }
         },
         updated: function () {
-//            console.log("DOM mdl upgraded");
             componentHandler.upgradeDom();
         },
         methods: {
@@ -376,6 +390,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                             latestPostCurView: (this.latestPostCurView === Infinity ? -1 : this.latestPostCurView)
                         },
                         function (data) {
+                            gtag('event', 'load_10_posts');
                             //if number returned is less than API default of 10, then all data is received. Don't re-update
                             if (data.length < 10) {
                                 self.isAtViewPaginationEnd = true;
@@ -425,6 +440,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                             }
                         }
                     }
+                    gtag('event', 'subscribe');
                     snack(successMessage);
                 }).fail(function () {
                     snack("Could not edit subscription.", 1000);
@@ -433,6 +449,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             deletePost: function (post_id) {
                 var self = this;
                 $.get('api/deletePost.php', {post_id: post_id}, function () {
+                    gtag('event', 'delete_post');
                     for (var i = 0; i < self.postsObj.length; i++) {
                         if (self.postsObj[i]['post_id'] === post_id) {
                             self.postsObj.splice(i, 1);

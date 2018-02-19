@@ -13,6 +13,18 @@ if (isset($_GET['id'])) {
 <html>
 <head>
     <title>Personal Profile</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<?=getenv("ANALYTICS_ID")?>');
+        gtag('set', {'user_id': '<?=$userinfo['profile_id']?>'});
+    </script>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/profile.css"/>
@@ -175,6 +187,7 @@ if (isset($_GET['id'])) {
         document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
     }
     function logout() {
+        gtag('event', 'logout');
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.replace('/');
@@ -249,6 +262,7 @@ if (isset($_GET['id'])) {
                         latestPostCurView: (this.latestPostCurView === Infinity ? -1 : this.latestPostCurView),
                         postsFromProfileID: this.profile_id
                     }, function (data) {
+                        gtag('event', 'load_10_posts_from_profile');
                         if (data.length < 10) {
                             self.isAtViewPaginationEnd = true;
                         }
@@ -277,6 +291,7 @@ if (isset($_GET['id'])) {
                     isAdmin: this.isAdmin
                 };
                 $.get('api/changeProfilePermissions.php', argsObj, function(data){
+                    gtag('event', 'admin_update_permissions');
                     snack('Admin: Permissions Assigned');
                 }).fail(function(){
                     snack("Couldn't contact server", 1500);
@@ -285,6 +300,7 @@ if (isset($_GET['id'])) {
             deletePost: function (post_id) {
                 var self = this;
                 $.get('api/deletePost.php', {post_id: post_id}, function () {
+                    gtag('event', 'delete_post');
                     for (var i = 0; i < self.postsObj.length; i++) {
                         if (self.postsObj[i]['post_id'] === post_id) {
                             self.postsObj.splice(i, 1);

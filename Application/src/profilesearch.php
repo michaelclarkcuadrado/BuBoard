@@ -8,6 +8,18 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
 <html>
 <head>
     <title>Profile Search</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<?=getenv("ANALYTICS_ID")?>');
+        gtag('set', {'user_id': '<?=$userinfo['profile_id']?>'});
+    </script>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <meta name="theme-color" content="#2196f3">
@@ -116,6 +128,7 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
         document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
     }
     function logout() {
+        gtag('event', 'logout');
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.replace('/');
@@ -150,12 +163,14 @@ $userinfo = buboard_authenticate($mysqli, $authenticationKey);
             search: function(query){
                 var self = this;
                 $.getJSON('api/profileSearchProvider.php', {q: query}, function(data) {
+                    gtag('event', 'search', {search_term : 'query'});
                     self.searchResults = data;
                 });
             },
             subscribe: function(profile_id, profile_index, isSearchResult){
                 var self = this;
                 $.get('api/subscribe.php', {subscribeToID: profile_id}, function() {
+                    gtag('event', 'subscribe');
                     if(isSearchResult){
                         self.searchResults[profile_index].isSubscribed = 1;
                         $.getJSON('/api/followRecommendations.php', function(data){

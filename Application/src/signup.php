@@ -11,7 +11,7 @@ if (isset($_GET['message'])) {
 ?>
 <html>
 <head>
-    <title>Welcome To BuBoard</title>
+    <title>Create a BuBoard Account</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>
@@ -114,6 +114,7 @@ if (isset($_GET['message'])) {
                 </div>
                 <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col">
                     <h2 class="mdl-color-text--blue-grey-600 title">Welcome to BuBoard!</h2>
+                    <h4>This is currently a private beta to students with a @gettysburg.edu address.</h4>
                 </div>
 
                 <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col">

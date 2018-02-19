@@ -10,7 +10,7 @@
 <html>
 
 <head>
-    <title>Welcome To BuBoard</title>
+    <title>Reset your Buboard Password</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>

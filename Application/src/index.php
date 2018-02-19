@@ -23,8 +23,8 @@ if (isset($_GET['message'])) {
 ?>
 <html>
 <head>
-    <title>Welcome To BuBoard</title>
-
+    <title>BuBoard - The Campus Bulletin Board</title>
+    <meta name="description" content="An Electronic Bulletin Board for College Campuses. Currently At Gettysburg College">
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>
     <script>

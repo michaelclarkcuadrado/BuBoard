@@ -29,7 +29,7 @@ if ($secret != $confirm_code){
 $result = mysqli_query($mysqli, "
       UPDATE buboard_profiles
       SET password_hash = '$password',
-      SET email_is_confirmed = 1
+      email_is_confirmed = 1
       WHERE email_address = '$email';
        ");
 

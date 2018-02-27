@@ -154,10 +154,10 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     </div>
                     <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
                 </div>
-                <div v-show="leftArrowVisible" class="left-swipe-arrow">
+                <div v-show="leftArrowVisible" v-on:click="arrowButtonHandler('right')" class="left-swipe-arrow">
                     <img style="height: 150px; border-top-right-radius: 15px; border-bottom-right-radius: 15px;" src="static/image/arrow-left.png">
                 </div>
-                <div v-show="rightArrowVisible" class="right-swipe-arrow">
+                <div v-show="rightArrowVisible" v-on:click="arrowButtonHandler('left')" class="right-swipe-arrow">
                     <img style="height: 150px; border-top-left-radius: 15px; border-bottom-left-radius: 15px;" src="static/image/arrow-right.png">
                 </div>
             </div>
@@ -220,7 +220,6 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
 <script src="static/js/material.min.js"></script>
 <script src="static/js/vue.min.js"></script>
 <script src="static/js/jquery.min.js"></script>
-<script src="static/js/jquery.touchSwipe.min.js"></script>
 <script>
     function logout() {
         gtag('event', 'logout');
@@ -309,24 +308,6 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     }
                 }
             });
-            if (window.matchMedia("screen and (max-width: 1024px)").matches) {
-                $('body').swipe({
-                    swipe: function (event, direction) {
-                        if (direction === "left") {
-                            self.listTransitionType = 'swipeleft';
-                            Vue.nextTick(function () {
-                                snack(self.swipeView(false), 1000);
-                            });
-                        } else if (direction === "right") {
-                            self.listTransitionType = 'swiperight';
-                            Vue.nextTick(function () {
-                                snack(self.swipeView(true), 1000);
-                            });
-                        }
-                    },
-                    allowPageScroll: "vertical"
-                });
-            }
         },
         updated: function () {
             componentHandler.upgradeDom();
@@ -351,6 +332,20 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     this.postsObj = [];
                     $('#category_tab_' + viewID + '_' + isCategory).toggleClass('is-active-feed-view');
                     this.getPosts();
+                }
+            },
+            arrowButtonHandler: function (direction) {
+                var self = this;
+                if (direction === "left") {
+                    self.listTransitionType = 'swipeleft';
+                    Vue.nextTick(function () {
+                        snack(self.swipeView(false), 1000);
+                    });
+                } else if (direction === "right") {
+                    self.listTransitionType = 'swiperight';
+                    Vue.nextTick(function () {
+                        snack(self.swipeView(true), 1000);
+                    });
                 }
             },
             swipeView: function (direction) { // moves view left or right, returns name.

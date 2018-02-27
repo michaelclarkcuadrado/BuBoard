@@ -149,6 +149,34 @@
     display: inline-grid;
 }
 
+@media screen and (max-width: 1024px) {
+    /* Arrows for swiping */
+    .left-swipe-arrow {
+        position: fixed;
+        top: calc(50% - 50px);
+        z-index: 1;
+        left: 0;
+    }
+
+    .right-swipe-arrow {
+        position: fixed;
+        top: calc(50% - 50px);
+        z-index: 1;
+        right: 0;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    /* disable arrows on desktop */
+    .left-swipe-arrow {
+        display: none;
+    }
+
+    .right-swipe-arrow {
+        display: none;
+    }
+}
+
 /*
 Post animations
 */

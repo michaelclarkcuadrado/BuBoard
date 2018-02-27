@@ -60,7 +60,7 @@ if (isset($_GET['id'])) {
     <main id="profile_page_main" class="mdl--layout__content">
         <div class="card-profile mdl-shadow--2dp">
             <img v-if="has_submitted_photo > 0" id="profile_image" :src="'/usercontent/user_avatars/' + profile_id + photo_filename_extension">
-            <img v-else id="profile_image" src="/static/image/portrait.jpg">
+            <img v-else id="profile_image" src="/static/image/portrait.png">
             <div class="content" id="content">
                 <h5><i v-if="isVerifiedAccount"
                        class="material-icons verified_user">verified_user</i>

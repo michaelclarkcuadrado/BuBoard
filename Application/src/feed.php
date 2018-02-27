@@ -154,6 +154,12 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     </div>
                     <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
                 </div>
+                <div v-show="leftArrowVisible" class="left-swipe-arrow">
+                    <img style="height: 150px; border-top-right-radius: 15px; border-bottom-right-radius: 15px;" src="static/image/arrow-left.png">
+                </div>
+                <div v-show="rightArrowVisible" class="right-swipe-arrow">
+                    <img style="height: 150px; border-top-left-radius: 15px; border-bottom-left-radius: 15px;" src="static/image/arrow-right.png">
+                </div>
             </div>
         </main>
     </div>
@@ -224,6 +230,9 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
     }
 
     function snack(message, length) {
+        if(message === undefined){
+            return;
+        }
         var data = {
             message: message,
             timeout: length
@@ -274,6 +283,8 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
             isAtViewPaginationEnd: false, //end of dataset, make no more requests until view change
             scrollLock: false, //mutex on scroll event handler
             listTransitionType: 'list',
+            leftArrowVisible: false,
+            rightArrowVisible: true,
             categories: <?php
             mysqli_data_seek($categoriesQuery, 0);
             $output = array();
@@ -329,6 +340,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                 });
             },
             /*Clear all state and request new one with new filter flags*/
+            /* Override = true will skip state change check and refresh anyway */
             changeView: function (viewID, isCategory, override) {
                 if (this.curViewIsCategory !== isCategory || this.curView !== viewID || override) {
                     $('#category_tab_' + this.curView + '_' + this.curViewIsCategory).toggleClass('is-active-feed-view');
@@ -347,17 +359,29 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     if (this.curViewIsCategory === 1) {
                         //smallest curview value is assumed to be 1 based on mysql's first default auto_increment
                         if (this.curView >= Object.keys(this.categories).length) {
-                            return "Nothing in that direction...";
+                            //Nothing there
+                            return;
                         } else {
                             this.changeView(this.curView + 1, 1, false);
+                            var rightArrow = true;
+                            if(this.curView === Object.keys(this.categories).length){
+                                rightArrow = false;
+                            }
+                            this.setArrowVisibility(true, rightArrow);
                             return "Tagged: " + this.categories[this.curView]['category_name'];
                         }
                     } else { //if not in categories
                         if (this.curView === 0) {
                             this.changeView(1, 0, false);
+                            this.setArrowVisibility(true, true);
                             return "Subscriptions";
                         } else {
                             this.changeView(1, 1, false);
+                            var rightArrow = true;
+                            if(this.curView === Object.keys(this.categories).length){
+                                rightArrow = false;
+                            }
+                            this.setArrowVisibility(true, rightArrow);
                             return "Tagged: " + this.categories[this.curView]['category_name'];
                         }
                     }
@@ -365,20 +389,32 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     if (this.curViewIsCategory === 1) {
                         if (this.curView <= 1) {
                             this.changeView(1, 0, false);
+                            this.setArrowVisibility(true, true);
                             return "Subscriptions";
                         } else {
                             this.changeView(this.curView - 1, 1, false);
+                            var rightArrow = true;
+                            if(this.curView === Object.keys(this.categories).length){
+                                rightArrow = false;
+                            }
+                            this.setArrowVisibility(true, rightArrow);
                             return "Tagged: " + this.categories[this.curView]['category_name'];
                         }
                     } else { //not in categories
                         if (this.curView === 0) {
-                            return "Nothing in that direction...";
+                            //Nothing there
+                            return;
                         } else {
                             this.changeView(0, 0, false);
+                            this.setArrowVisibility(false, true);
                             return "Latest Posts";
                         }
                     }
                 }
+            },
+            setArrowVisibility: function(leftArrow, rightArrow){
+                this.leftArrowVisible = leftArrow;
+                this.rightArrowVisible = rightArrow;
             },
             getPosts: function () {
                 this.scrollLock = true;

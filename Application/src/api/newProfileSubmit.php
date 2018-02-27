@@ -78,7 +78,8 @@ if (!$check) {
         $sql_check = true;
     } else {
         kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
-        header("location: ../signup.php?message=Something went wrong");
+        header("location: ../signup.php?message=That account already exists.");
+        die();
     }
 
     //auto-follow all verified accounts
@@ -112,13 +113,16 @@ if (!$check) {
                     $status = "Sorry, there was a problem uploading your file.";
                     kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
                     header("location: ../signup.php?message=$status");
+                    die();
                 }
             } else {
                 kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
                 header("location: ../signup.php?message=$status");
+                die();
             }
         } else {
             kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
+            die();
         }
     }
 
@@ -155,6 +159,7 @@ if (!$check) {
         error_log('Message could not be sent.');
         kill_signup($mysqli, $sql_check, $pic_check, $profile_id);
         header("location: ../signup.php?message=An error was encountered when sending the email");
+        die();
     }
 }
 
@@ -164,23 +169,15 @@ function kill_signup($mysqli, $sql_check, $pic_check, $profile_id){
     // if $pic_check = true: then the picture was added to the database, but an error was encountered later
     // if both false: nothing need to be done, as no data was added before a failure
 
-    // if $sql_check = true and $pic_check = false: we have to remove the most recent addition to the profile list
-    if ($sql_check == true && $pic_check == false) {
+    // if $sql_check = true and $pic_check = false: we have to remove the addition to the profile list
         $posts_queryresult = mysqli_query($mysqli, "
             DELETE
             FROM buboard_profiles
             WHERE profile_id = '$profile_id';
         ");
-    } // if $sql_check = false and $pic_check = true: we need to remove the profile pic with the highest number
-    else if ($sql_check == false && $pic_check == true) {
-    } // if both true: remove most recent profile and most recent profile pic
-    else if ($sql_check == true && $pic_check == true) {
-        $posts_queryresult = mysqli_query($mysqli, "
-            DELETE
-            FROM buboard_profiles
-            WHERE profile_id = '$profile_id';
-        ");
-    }
+        if($pic_check){
+            unlink($target);
+        }
 }
 
 ?>

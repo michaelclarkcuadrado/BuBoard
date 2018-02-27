@@ -33,7 +33,7 @@ services:
 # working ssl implementation. Comment for development env
  nginx-proxy:
   restart: always
-  image: jwilder/nginx-proxy
+  build: ./nginx-proxy
   ports:
    - "80:80"
    - "443:443"

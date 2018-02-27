@@ -340,11 +340,13 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                     self.listTransitionType = 'swipeleft';
                     Vue.nextTick(function () {
                         snack(self.swipeView(false), 1000);
+                        self.scrollToTop();
                     });
                 } else if (direction === "right") {
                     self.listTransitionType = 'swiperight';
                     Vue.nextTick(function () {
                         snack(self.swipeView(true), 1000);
+                        self.scrollToTop();
                     });
                 }
             },

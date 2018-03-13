@@ -86,8 +86,8 @@ if (isset($_GET['id'])) {
         </div>
         <div id="infoPane" class="mdl-grid mdl-grid--no-spacing">
             <div v-if="isOwnProfile" style="height:100%" class="mdl-cell mdl-cell--4-col">
-                <h5 style="margin: 0; padding: 8px">Your Subscriptions </h5>
-                <ul style="margin-top: 0; padding-top: 0" class="mdl-list">
+                <h5 style="margin: 0; padding: 8px">Your Subscriptions ({{ Object.keys(subscribees).length }})</h5>
+                <ul style="margin: 0; padding: 0" class="mdl-list">
                     <li v-for="subscribee in subscribees" class="mdl-list__item mdl-list__item--two-line">
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="subscribee.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + subscribee.profile_id" style="cursor: pointer"
@@ -108,6 +108,29 @@ if (isset($_GET['id'])) {
                             <span class="post-name-display">
                                 No Subscriptions. <br>
                                 <a href="profilesearch.php">Discover who's on BuBoard</a>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+                <h5 style="margin: 0; padding: 8px">Following You ({{ Object.keys(subscribers).length }})</h5>
+                <ul style="margin: 0; padding: 0" class="mdl-list">
+                    <li v-for="subscriber in subscribers" class="mdl-list__item mdl-list__item--two-line">
+                            <span class="mdl-list__item-primary-content">
+                                <i v-if="subscriber.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + subscriber.profile_id" style="cursor: pointer"
+                                   class="material-icons mdl-list__item-avatar">person</i>
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscriber.profile_id + subscriber.photo_filename_extension" v-on:click="window.location='profile.php?id=' + subscriber.profile_id"
+                                     style="cursor: pointer" class="mdl-list__item-avatar">
+                                <span v-on:click="window.location='profile.php?id=' + subscriber.profile_id" class="post-name-display"><i v-if="subscriber.isVerifiedAccount > 0"
+                                                                                                                                          class="material-icons verified_user">verified_user</i>{{subscriber.real_name}}</span>
+                                <span class="mdl-list__item-sub-title">Your Follower</span>
+                            </span>
+                    </li>
+                    <li v-if="Object.keys(subscribers).length == 0" class="mdl-list__item">
+                        <span class="mdl-list__item-primary-content">
+                            <i class="material-icons mdl-list__item_avatar">person</i>
+                            <span class="post-name-display">
+                                No Followers. <br>
+                                <a href="feed.php">Post more to gain more followers!</a>
                             </span>
                         </span>
                     </li>
@@ -201,6 +224,7 @@ if (isset($_GET['id'])) {
             isAtViewPaginationEnd: false,
             scrollLock: false,
             subscribees: {},
+            subscribers: {},
             profile_id: 0,
             real_name: "",
             isVerifiedAccount: false,
@@ -229,7 +253,8 @@ if (isset($_GET['id'])) {
                 self.isOwnProfile = data.isOwnProfile;
                 if (self.isOwnProfile) {
                     $.getJSON("api/getSubscriptionList.php", function (data) {
-                        self.subscribees = data;
+                        self.subscribees = data.subscribees;
+                        self.subscribers = data.subscribers;
                     }).fail(function () {
                         snack("Could not connect to server.", 5000);
                     });

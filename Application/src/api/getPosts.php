@@ -92,7 +92,7 @@ $query .= " GROUP BY post_id ORDER BY post_id DESC LIMIT 10";
 $posts_queryresult = mysqli_query($mysqli, $query);
 
 //update number of unread posts to zero, since this person is online, could probably be refined
-mysqli_query($mysqli, "UPDATE buboard_profiles SET followers_posts_since_feed_pull = 0");
+mysqli_query($mysqli, "UPDATE buboard_profiles SET followers_posts_since_feed_pull = 0, power_of_two_posts_til_notification = 3 WHERE profile_id = '$userID'");
 
 $formatted_posts = array();
 while ($post = mysqli_fetch_assoc($posts_queryresult)) {

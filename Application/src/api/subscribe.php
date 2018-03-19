@@ -25,5 +25,9 @@ if(isset($_GET['subscribeToID']) && $_GET['subscribeToID'] !== $ownID){
             mysqli_query($mysqli, "
               INSERT INTO profile_follows (follower_id, followee_id) VALUES ('$ownID', '$subscribeTo');  
             ");
+            $shouldSendMessage = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT follower_texts_enabled FROM buboard_profiles WHERE profile_id = '$subscribeTo'"))['follower_texts_enabled'];
+            if($shouldSendMessage > 0){
+                sendTextMessage($mysqli, $subscribeTo, false,$userinfo['real_name'] . ' just subscribed to you on BuBoard!');
+            }
     }
 } else {APIFail();}

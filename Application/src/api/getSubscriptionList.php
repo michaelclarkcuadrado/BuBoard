@@ -7,7 +7,7 @@
  */
 require_once '../config.php';
 $userinfo = buboard_authenticate($mysqli, $authenticationKey);
-$output = array();
+$output = array('subscribers' => array(), 'subscribees' => array());
 
 $userIsSubscribedTo = mysqli_query($mysqli, "SELECT
   profile_id,

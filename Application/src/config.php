@@ -1,4 +1,7 @@
 <?php
+require_once 'api/twilio-php/Twilio/autoload.php'; // Loads the library
+use Twilio\Rest\Client;
+
 //Mysql db details
 $dbhost = 'buboard-database';
 $dbusername = 'buboard';
@@ -59,4 +62,25 @@ function APIFail($errorMsg = 'Internal Server Error'){
     error_log($errorMsg);
     echo $errorMsg;
     die();
+}
+
+/*
+ * Sends a text message using twilio and logs it
+ * */
+function sendTextMessage($mysqli, $user_id, $is_confirmation_text, $message){
+    $twilioClient = new Client(getenv('TWILIO_ACC_SID'), getenv('TWILIO_ACC_AUTH'));
+    $userinfo = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT phone_number_is_confirmed , phone_number FROM buboard_profiles WHERE profile_id = '$user_id'"));
+    if($userinfo['phone_number_is_confirmed'] > 0 || $is_confirmation_text){
+        $twilioClient->messages->create($userinfo['phone_number'],     array(
+            'from' => getenv('TWILIO_NUM_SMS'),
+            'body' => $message
+        ));
+        $message = mysqli_real_escape_string($mysqli, $message);
+        mysqli_query($mysqli, "INSERT INTO buboard_outgoing_messages_log (user_id, number, message_text)
+          VALUES ($user_id, '". $userinfo['phone_number'] ."', '" . $message . "');
+        ");
+        error_log(mysqli_error($mysqli));
+    } else {
+        error_log("No message sent, no number on file.");
+    }
 }

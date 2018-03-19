@@ -15,10 +15,14 @@ if (isset($_GET['id'])) {
     <title>Personal Profile</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<?=getenv("ANALYTICS_ID")?>"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= getenv("ANALYTICS_ID") ?>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
 
         gtag('config', '<?=getenv("ANALYTICS_ID")?>');
@@ -28,7 +32,6 @@ if (isset($_GET['id'])) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="static/css/material.min.css"/>
     <link rel="stylesheet" href="static/css/profile.css"/>
-<!--    <link rel="stylesheet" href="static/css/introjs.css"/>-->
     <meta name="theme-color" content="#2196f3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -66,9 +69,61 @@ if (isset($_GET['id'])) {
                        class="material-icons verified_user">verified_user</i>
                     {{ real_name }}
                 </h5>
-                <a style="background-color: rgba(255,255,255,0.2); color: #0000EE; padding: 4px; border-radius: 5px; word-wrap: break-word" :href="'mailto:' + email_address">Email Address: {{email_address}}</a>
+                <a style="background-color: rgba(255,255,255,0.2); color: #0000EE; padding: 4px; border-radius: 5px; word-wrap: break-word"
+                   :href="'mailto:' + email_address">Email Address: {{email_address}}</a>
                 <p>{{ profile_desc }}</p>
                 <p v-if="isSubscribed > 0"><b>This user is subscribed to you.</b></p>
+                <div v-if="isOwnProfile" class="text_options_panel">
+                    <div v-if="!phone_number_is_confirmed && !phone_confirmation_text_sent">
+                        Register for text message notifications from BuBoard!
+                        <br>
+                        <small>Phone number will not be public. Opt-out at any time.</small>
+                        <br>
+                        <div style="display:inline-block">
+                            <div class="mdl-textfield mdl-js-textfield" style="width: 3.5em">
+                                <input class="mdl-textfield__input" v-model="frontend_areacode_register" type="text" minlength="3" size="3" maxlength="3" id="areacode_register">
+                                <label class="mdl-textfield__label" for="areacode_register">Area</label>
+                            </div>
+                            <div class="mdl-textfield mdl-js-textfield" style="width: 6em">
+                                <input class="mdl-textfield__input" v-model="frontend_phonenumber_register" type="text" minlength="7" size="7" maxlength="7" id="phonenum_register">
+                                <label class="mdl-textfield__label" for="phonenum_register">Number</label>
+                            </div>
+                            <button v-on:click="submitPhoneNumberRegistration()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                                verify
+                            </button>
+                        </div>
+                    </div>
+                    <div v-else-if="phone_confirmation_text_sent && !phone_number_is_confirmed">
+                        A confirmation text has been sent to {{ phone_number }}. Please enter your six-digit code.<br>
+                        <div class="mdl-textfield mdl-js-textfield" style="width:5em">
+                            <input class="mdl-textfield__input" type="text" minlength="6" size="6" maxlength="6" v-model="frontend_phone_confirmation_input" id="confirmcode_register">
+                            <label class="mdl-textfield__label" for="confirmcode_register">Code</label>
+                        </div>
+                        <button v-on:click="confirmPhoneTextCode()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                            verify
+                        </button>
+                        <button v-on:click="unregisterPhoneNumber()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                            forget this number
+                        </button>
+                    </div>
+                    <div v-else-if="phone_number_is_confirmed">
+                        <span class="mdl-typography--font-bold">Text Message Preferences</span><br>
+                        <span>Confirmed Phone Number: +1{{ phone_number }}</span>
+                        <div>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect text-preference-list-item" for="unreadPostsTextsCheckbox">
+                                <input type="checkbox" id="unreadPostsTextsCheckbox" v-model="unread_texts_enabled" class="mdl-checkbox__input" checked>
+                                <span class="mdl-checkbox__label">Receive alerts of unread posts from your subscriptions</span>
+                            </label>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect text-preference-list-item" for="newFollowersTextsCheckbox">
+                                <input type="checkbox" id="newFollowersTextsCheckbox" v-model="follower_texts_enabled" class="mdl-checkbox__input" checked>
+                                <span class="mdl-checkbox__label">Receive alerts when someone follows you</span>
+                            </label>
+                        </div>
+                        <button v-on:click="unregisterPhoneNumber()" style="margin: 5px" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                            Unregister phone number
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="hazard_panel" v-if="curProfileIsAdmin">
                 <div style="background-color: cadetblue; margin: 5px; padding: 5px;">
@@ -92,7 +147,8 @@ if (isset($_GET['id'])) {
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="subscribee.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + subscribee.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscribee.profile_id + subscribee.photo_filename_extension" v-on:click="window.location='profile.php?id=' + subscribee.profile_id"
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscribee.profile_id + subscribee.photo_filename_extension"
+                                     v-on:click="window.location='profile.php?id=' + subscribee.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
                                 <span v-on:click="window.location='profile.php?id=' + subscribee.profile_id" class="post-name-display"><i v-if="subscribee.isVerifiedAccount > 0"
                                                                                                                                           class="material-icons verified_user">verified_user</i>{{subscribee.real_name}}</span>
@@ -118,7 +174,8 @@ if (isset($_GET['id'])) {
                             <span class="mdl-list__item-primary-content">
                                 <i v-if="subscriber.has_submitted_photo == 0" v-on:click="window.location='profile.php?id=' + subscriber.profile_id" style="cursor: pointer"
                                    class="material-icons mdl-list__item-avatar">person</i>
-                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscriber.profile_id + subscriber.photo_filename_extension" v-on:click="window.location='profile.php?id=' + subscriber.profile_id"
+                                <img v-else v-bind:src="'usercontent/user_avatars/' + subscriber.profile_id + subscriber.photo_filename_extension"
+                                     v-on:click="window.location='profile.php?id=' + subscriber.profile_id"
                                      style="cursor: pointer" class="mdl-list__item-avatar">
                                 <span v-on:click="window.location='profile.php?id=' + subscriber.profile_id" class="post-name-display"><i v-if="subscriber.isVerifiedAccount > 0"
                                                                                                                                           class="material-icons verified_user">verified_user</i>{{subscriber.real_name}}</span>
@@ -136,8 +193,10 @@ if (isset($_GET['id'])) {
                     </li>
                 </ul>
             </div>
-            <div id="postsContentPanel" style="margin: 0" :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
-                <div v-for="post in postsObj" v-bind:key="post" :class="['mdl-card', 'mdl-shadow--8dp', 'mdl-cell', 'mdl-cell--4-col', (isOwnProfile && Object.keys('subscribees').length > 0 ? 'mdl-cell--6-col-desktop mdl-cell--8-col-tablet' : '')]">
+            <div id="postsContentPanel" style="margin: 0"
+                 :class="['mdl-cell', 'mdl-cell--4-col', 'mdl-shadow--8dp', (isOwnProfile) ? 'mdl-cell--8-col-desktop mdl-cell--4-col-tablet' : 'mdl-cell--12-col-desktop mdl-cell--8-col-tablet']">
+                <div v-for="post in postsObj" v-bind:key="post"
+                     :class="['mdl-card', 'mdl-shadow--8dp', 'mdl-cell', 'mdl-cell--4-col', (isOwnProfile && Object.keys('subscribees').length > 0 ? 'mdl-cell--6-col-desktop mdl-cell--8-col-tablet' : '')]">
                     <div class="postTitleCard mdl-card__title mdl-color--blue">
                         <img class="thumbtack" src="static/image/thumbtack.png">
                         <h2 class="mdl-card__title-text">
@@ -207,8 +266,10 @@ if (isset($_GET['id'])) {
             message: message,
             timeout: length
         };
+        console.log("Snacked: " + message + " " + length);
         document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
     }
+
     function logout() {
         gtag('event', 'logout');
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
@@ -234,13 +295,24 @@ if (isset($_GET['id'])) {
             photo_filename_extension: "",
             profile_desc: "",
             email_address: "",
+            phone_number: "",
+            phone_number_is_confirmed: false,
+            phone_confirmation_text_sent: false,
+            unread_texts_enabled: false,
+            follower_texts_enabled: false,
+            frontend_areacode_register: "",
+            frontend_phonenumber_register: "",
+            frontend_phone_confirmation_input: "",
             isOwnProfile: false,
             isSubscribed: false
+        },
+        updated: function () {
+            componentHandler.upgradeDom();
         },
         mounted: function () {
             var self = this;
             //todo merge subscription list into single API call
-            $.getJSON('api/getProfilePageData.php', {id: <?=$profile_id?>}, function(data) {
+            $.getJSON('api/getProfilePageData.php', {id: <?=$profile_id?>}, function (data) {
                 self.profile_id = data.profile_id;
                 self.real_name = data.real_name;
                 self.isAdmin = data.isAdmin;
@@ -252,6 +324,13 @@ if (isset($_GET['id'])) {
                 self.isSubscribed = data.isSubscribed;
                 self.isOwnProfile = data.isOwnProfile;
                 if (self.isOwnProfile) {
+                    self.phone_confirmation_text_sent = data.phone_confirmation_text_sent;
+                    self.phone_number_is_confirmed = data.phone_number_is_confirmed;
+                    self.phone_number = data.phone_number;
+                    if (self.phone_number_is_confirmed) {
+                        self.follower_texts_enabled = data.follower_texts_enabled;
+                        self.unread_texts_enabled = data.unread_texts_enabled;
+                    }
                     $.getJSON("api/getSubscriptionList.php", function (data) {
                         self.subscribees = data.subscribees;
                         self.subscribers = data.subscribers;
@@ -260,10 +339,10 @@ if (isset($_GET['id'])) {
                     });
                 }
                 self.getPosts();
-            }).fail(function(data){
+            }).fail(function (data) {
                 //set timeout to allow snack to be available.
-                setTimeout(function(){
-                    snack(data.responseText, 9001);
+                setTimeout(function () {
+                    snack("Connection unavailable.", 9001);
                 }, 150);
             });
             $('#infoPane').on('scroll', function () {
@@ -277,6 +356,22 @@ if (isset($_GET['id'])) {
         },
         updated: function () {
             componentHandler.upgradeDom();
+        },
+        watch: {
+            unread_texts_enabled: function (oldVal, newVal) {
+                $.get('api/changeTextPreferences.php', {
+                    setProperty: 'unread_texts_enabled',
+                    val: (newVal ? 0 : 1)
+                }, function(){
+                });
+            },
+            follower_texts_enabled: function(oldVal, newVal){
+                $.get('api/changeTextPreferences.php', {
+                    setProperty: 'follower_texts_enabled',
+                    val: (newVal ? 0 : 1)
+                }, function(){
+                });
+            }
         },
         methods: {
             getPosts: function () {
@@ -309,16 +404,16 @@ if (isset($_GET['id'])) {
                     });
                 }
             },
-            updatePermissions: function() {
+            updatePermissions: function () {
                 var argsObj = {
                     profile_id: this.profile_id,
                     verifiedAccount: this.isVerifiedAccount,
                     isAdmin: this.isAdmin
                 };
-                $.get('api/changeProfilePermissions.php', argsObj, function(data){
+                $.get('api/changeProfilePermissions.php', argsObj, function (data) {
                     gtag('event', 'admin_update_permissions');
                     snack('Admin: Permissions Assigned');
-                }).fail(function(){
+                }).fail(function () {
                     snack("Couldn't contact server", 1500);
                 });
             },
@@ -378,6 +473,48 @@ if (isset($_GET['id'])) {
                     snack('Unsubscribed.', 2500);
                 }).fail(function () {
                     snack("Couldn't unsubscribe from user.", 2500);
+                });
+            },
+            submitPhoneNumberRegistration: function () {
+                if (this.frontend_areacode_register.length === 3 && this.frontend_phonenumber_register.length === 7) {
+                    //send data and ask for confirmation code
+                    var self = this;
+                    var argsObj = {
+                        areacode: this.frontend_areacode_register,
+                        phonenum: this.frontend_phonenumber_register
+                    };
+                    $.get('api/registerPhoneNumber.php', argsObj, function (data) {
+                        self.phone_number = data;
+                        self.phone_confirmation_text_sent = true;
+                    }).fail(function () {
+                        snack("The server is currently unavailable.", 1500)
+                    });
+                } else {
+                    snack("That phone number is not the correct length", 1500)
+                }
+            },
+            confirmPhoneTextCode: function () {
+                var self = this;
+                $.getJSON('api/confirmPhoneNumber.php', {confirmCode: self.frontend_phone_confirmation_input}, function (data) {
+                    if (data.isConfirmed === true) {
+                        self.phone_number_is_confirmed = true;
+                        self.follower_texts_enabled = 1;
+                        self.unread_texts_enabled = 1;
+                        snack('Phone number confirmed.', 1600);
+                    } else {
+                        snack('Could not confirm that code. Try again.', 1600);
+                    }
+                })
+            },
+            unregisterPhoneNumber: function () {
+                var self = this;
+                $.get('api/registerPhoneNumber.php', {unregister: 1}, function (data) {
+                    self.phone_number_is_confirmed = false;
+                    self.phone_confirmation_text_sent = false;
+                    self.phone_number = '';
+                    snack("Phone unregistered.", 1500);
+                }).fail(function () {
+                    snack('Server is unavailable.', 1500);
                 });
             },
             invertColor: function (hex, bw) {

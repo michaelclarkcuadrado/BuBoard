@@ -40,8 +40,15 @@ $posts_queryresult = mysqli_query($mysqli, "
 
 $post_id = mysqli_insert_id($mysqli);
 
-//increment all followers unread by 1
-$subscribersToPoster = mysqli_query($mysqli, "UPDATE buboard_profiles JOIN profile_follows follow ON buboard_profiles.profile_id = follow.follower_id SET followers_posts_since_feed_pull = followers_posts_since_feed_pull + 1 WHERE followee_id = '".$userinfo['profile_id']."'");
+//send SMS to profiles who haven't pulled the feed in a while
+mysqli_query($mysqli, "UPDATE buboard_profiles JOIN profile_follows follow ON buboard_profiles.profile_id = follow.follower_id SET followers_posts_since_feed_pull = followers_posts_since_feed_pull + 1 WHERE phone_number_is_confirmed > 0 AND followee_id = '".$userinfo['profile_id']."'");
+$user_ids_to_notify = mysqli_query($mysqli, "SELECT profile_id, followers_posts_since_feed_pull FROM buboard_profiles WHERE followers_posts_since_feed_pull >= POWER(2, buboard_profiles.power_of_two_posts_til_notification) AND unread_texts_enabled");
+while($sms = mysqli_fetch_assoc($user_ids_to_notify)){
+    sendTextMessage($mysqli, $sms['profile_id'], false,"You have " . $sms['followers_posts_since_feed_pull'] . " unread posts from your subscriptions on BuBoard!");
+}
+
+//bump up notification
+mysqli_query($mysqli, "UPDATE buboard_profiles SET power_of_two_posts_til_notification = power_of_two_posts_til_notification + 1 WHERE followers_posts_since_feed_pull >= POWER(2, power_of_two_posts_til_notification)");
 
 if($imageUploaded) {
     //TODO validation here should totally be improved

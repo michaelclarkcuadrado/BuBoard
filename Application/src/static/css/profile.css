@@ -1,3 +1,15 @@
+.text_options_panel {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 5px;
+    margin-right: 8px;
+}
+
+.text-preference-list-item{
+    height: unset;
+    margin: 5px;
+}
+
 /*
     Fixed header has different widths on mobile and desktop
 */

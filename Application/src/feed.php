@@ -351,7 +351,7 @@ $categoriesQuery = mysqli_query($mysqli, "SELECT category_id, category_name, cat
                 }
             },
             swipeView: function (direction) { // moves view left or right, returns name.
-                //direction is true for right, left for left
+                //direction is true for right, false for left
                 if (!direction) { //moving right
                     if (this.curViewIsCategory === 1) {
                         //smallest curview value is assumed to be 1 based on mysql's first default auto_increment

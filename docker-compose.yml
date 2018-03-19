@@ -22,13 +22,14 @@ services:
   volumes:
    - buboard-db:/var/lib/mysql
 
-# phpmyadmin:
-#  image: phpmyadmin/phpmyadmin
-#  container_name: phpmyadmin
-#  environment:
-#   - PMA_HOST=buboard-database
-#  ports:
-#   - 8080:80
+ phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  restart: always
+  container_name: buboard-phpmyadmin
+  environment:
+   - PMA_HOST=buboard-database
+  ports:
+   - 31415:80
 
 # working ssl implementation. Comment for development env
  nginx-proxy:
